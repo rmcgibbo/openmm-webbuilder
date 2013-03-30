@@ -1,91 +1,57 @@
-var Collection = Backbone.Collection.extend({
-  model: Backbone.Model
-});
-
-var OpenMMScriptView = Backbone.View.extend({
-  initialize : function() {
-    this.collection.bind('change', this.render);
-    
-    //setting the models attribute seems to be essential to getting
-    // the initial render to go right, but gets overriden later...
-    this.models = this.collection.models;
-    this.render();
-  },
-  
-  render: function() {
-    el = "#code";
-    values = {};
-
-    for (var i=0; i < this.models.length; i++) {
-       var name = this.models[i].name;
-       var raw_json = this.models[i].toJSON();
-
-       values[name] = raw_json
-       if (this.models[i].jsonify != undefined) {
-         values[name] = this.models[i].jsonify(raw_json);
-       }
-    }
-
-    $('#template-mustache').Chevron("render", values, function(result) {
-        $(el).html(prettyPrintOne(result));
-    });
-  },
-
-});
-
-// this is the main method
-// install the Backbone.Forms from the schemas
 $(function () {
   Backbone.Form.editors.List.Modal.ModalAdapter = Backbone.BootstrapModal;
   Backbone.Form.helpers.keyToTitle = function (key) {return key};
-  
 
+  var ModelsClasses = [General, System, Integrator, Simulation];
   var collection = new Collection([]);
 
-  for (var key in models) {
-      schema = models[key].schema;
-      var Model = Backbone.Model.extend({
-        schema: schema,
-        name: key,
-        jsonify: models[key].jsonify,
-      });
-      var model = new Model(models[key]['default']);
-      
+  for (var i in ModelsClasses) {
+      model = new ModelsClasses[i]();
       var form = new Backbone.Form({
           idPrefix: key + '-',
           model : model,
       }).render();
     
-      form.commit();
-    
       // make the form revalidate when anything is changed
       form.on('change', function(form, editor) {
           form.commit({validate: true});
       });
-    
-      $(models[key].el).append(form.el);
+      
+      //add the form to the dom, and to our collection
+      $(model.el).append(form.el);
       collection.add(model);
     
       // install the popover help text
-      for (var key in schema) {
-          var options = schema[key];
+      for (var key in model.schema) {
+          var options = model.schema[key];
+          var label = $('label[for="' + form.options.idPrefix + key + '"]');
+          
+          // move the labels innerhtml into a <a> tag inside, so that
+          // users can see that there will be popover text, since its an a
+          var name = label[0].innerHTML;
+          $(label).html('');
+          label.append('<a class="sidebar-label" href="#">' + name +'</a>');
+
           if ('help' in options) {
-            var label = $('label[for="' + form.options.idPrefix + key + '"]');
             label.popover({content: options.help});
+
           }
       }
     
-     // remove the help-block installed by Backbone.Form
+     // remove the help-block installed by Backbone.Form, since we're
+     // using the popover
      $(form.el).find('.help-block').remove();
   }
 
   // instantiate a view on the collection of models
   var myview = new OpenMMScriptView({
     collection: collection,
-    el: '#code'
   });
 
 });
+
+
+// SOME EXTRA STUFF THAT NEEDS TO BE DONE ONLOAD
 
 // activate the tab system in the sidebar
 $(function () {
@@ -98,6 +64,6 @@ $(function () {
 // respond to the click event on the save-script button
 $(function () {
   $('#save-script-local').click(function() {
-    bootbox.alert('Sorry, this feature is not yet supported.');
+    bootbox.alert('Sorry, this feature is not yet supported. Just copy-paste for now?');
   });
 });

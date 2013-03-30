@@ -33,6 +33,11 @@ select {
   margin-bottom: inherit;
 }
 
+a.sidebar-label {
+  color: #000000;
+  text-decoration: none;
+}
+
 pre {
 /*  width: 700px;*/
 }
