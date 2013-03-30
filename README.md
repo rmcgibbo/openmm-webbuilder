@@ -25,7 +25,7 @@ public directory and running
 
 ```
 $ python -m SimpleHTTPServer 8080
-```.
+```
 
 ## Rebuilding the minified libraries
 The content from the `public/js/libs/` folder is being served minified. If you add more libraries, or
