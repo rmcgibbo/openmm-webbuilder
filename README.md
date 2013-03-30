@@ -3,9 +3,11 @@
 _webapp for generating custom openmm scripts_
 
 ## Tools
-- Bootstrap
-- Backbone
+- bootstrap
+- backbone.js
 - Backbone-forms (https://github.com/powmedia/backbone-forms)
+- mustache.js
+- heroku
 
 ## Development
 The app is almost 100% javscript, running in the browser. The only function that requires
