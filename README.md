@@ -1,30 +1,23 @@
 [openmm-webbuilder](https://openmm.herokuapp.com/)
 ==================
-_webapp for generating custom openmm scripts_
-
-## Tools
-- bootstrap
-- backbone.js
-- Backbone-forms (https://github.com/powmedia/backbone-forms)
-- mustache.js
-- heroku
+_webapp for generating custom OpenMM scripts_
 
 ## Development
 The app is almost 100% javscript, running in the browser. The only function that requires
-server interaction is the 'save' button. To run the development server with `rack`, which 
-is how its running on heroku, you need ruby and the bundler gem. I followed the directions
-here https://devcenter.heroku.com/articles/static-sites-ruby to create the app structure.
-If you've got this stuff installed, you can start the development server up with
+server interaction is the 'save' button. To run the development server with `rack`
+(this is how it's being served on heroku) you need ruby and the bundler gem. I followed the
+directions here https://devcenter.heroku.com/articles/static-sites-ruby to create the app structure.
+If you've got this stuff installed, you can start the development server on port 9292 with
 
 ```
 $ rackup
 ```
 
-If you don't know how to do this, you can run a simple python webserver by moving into the
-public directory and running
+If you have (and don't want to install) `ruby`/`rack`, you can start up a simple development server
+with python. All the files will be served correctly, but the save button will NOT work.
 
 ```
-$ python -m SimpleHTTPServer 8080
+$ cd public && python -m SimpleHTTPServer 9292
 ```
 
 ## Rebuilding the minified libraries
@@ -39,3 +32,10 @@ uglifyjs `find public/js/libs -name '*.js'` -o public/js/lib.min.js
 
 This obviously requires `uglifyjs`, which is a node package. You'll need [node.js](http://nodejs.org/) and
 then you can install `uglifyjs` with `npm -g install uglify-js`.
+
+## Thanks to
+- bootstrap
+- backbone.js
+- Backbone-forms (https://github.com/powmedia/backbone-forms)
+- mustache.js
+- heroku
