@@ -17,6 +17,7 @@ var OpenMMScriptView = Backbone.View.extend({
        values[name] = this.models[i].jsonify();
     }
     $('#template-mustache').Chevron("render", values, function(result) {
+        $(el).data('rawcode', result);
         $(el).html(prettyPrintOne(result));
     });
   },

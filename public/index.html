@@ -27,10 +27,12 @@
 
     <!-- Mustache templates -->
     <script src="//cdnjs.cloudflare.com/ajax/libs/mustache.js/0.7.2/mustache.min.js"></script>
+
+
     <script src="js/libs/chevron.js"></script>
-    
-    <!-- BootBox alerts -->
     <script src="js/libs/bootbox.min.js"></script>
+    <script src="js/libs/base64.js"></script>
+
 
     <link href="templates/template.mustache" rel="template" id="template-mustache"/>
     <link href="css/style.css" rel="stylesheet">
@@ -57,10 +59,10 @@
         </ul>
       </div><!--/.nav-collapse -->
       
-      <div class="pull-right">
-        <!-- <button class="btn">Save Gist</button> -->
-        <button id="save-script-local" class="btn">Save Script</button>
-      </div>
+      <form id="save-form" method="post" action="/save" class="navbar-form pull-right">
+        <button type="button" id="save-script-local" class="btn">Save</button>
+        <input name="filename" placeholder="openmm.py" type="text" style="width:100px">
+      </form>
       
     </div>
   </div>

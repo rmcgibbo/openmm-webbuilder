@@ -64,6 +64,27 @@ $(function () {
 // respond to the click event on the save-script button
 $(function () {
   $('#save-script-local').click(function() {
-    bootbox.alert('Sorry, this feature is not yet supported. Just copy-paste for now?');
+    var form = $('#save-form');
+
+    var script_input = $("<input name='value'></input");
+    var filename_input = form.find('input[name="filename"]')
+    
+    // check if no value has been entered for the filename
+    var set_value_from_placeholder = false;
+    if (filename_input[0].value == '') {
+      set_value_from_placeholder = true;
+      filename_input[0].value = filename_input.attr('placeholder');
+    }
+  
+    var code = Base64.encode($('#code').data('rawcode'));
+    script_input.attr('type', 'hidden').attr('value', code).appendTo(form);
+
+    form.submit();
+    
+    // reset it, if we messed w/ the form
+    if (set_value_from_placeholder) {
+      filename_input[0].value = '';
+    }
+    
   });
 });
