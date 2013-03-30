@@ -27,7 +27,7 @@ javascript is not being minified, so you **only** need to worry about this if yo
 To rebuild`public/js/lib.min.js`, run
 
 ```
-uglifyjs `find public/js/libs -name '*.js'` -o public/js/lib.min.js
+uglifyjs `find public/js/libs -name '*.js'` -c -m -o public/js/lib.min.js
 ```
 
 This obviously requires `uglifyjs`, which is a node package. You'll need [node.js](http://nodejs.org/) and
