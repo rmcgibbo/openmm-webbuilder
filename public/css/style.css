@@ -1,0 +1,43 @@
+body {
+  padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+}
+
+/* make sure that the input forms dont go any wider
+   than their box*/
+input {
+  max-width: 150px;
+}
+select {
+  max-width: 165px;
+}
+
+/* adjust the width of the input forms*/
+.form-horizontal .control-label {
+  width: 100px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.form-horizontal .controls {
+  margin-left: 150px;
+  width: 100px;
+}
+
+/* decrease the spacing between elements*/
+.form-horizontal .control-group {
+  margin-bottom: -5px; //adjust to your liking
+}
+/* but makee sure to add more space when
+   there is an error*/
+.form-horizontal .control-group.error {
+  margin-bottom: inherit;
+}
+
+a.sidebar-label {
+  color: #000000;
+  text-decoration: none;
+}
+
+pre {
+/*  width: 700px;*/
+}
