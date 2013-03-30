@@ -10,12 +10,12 @@ run Proc.new { |env|
     if path == '/save'
         # respond by echoing 'value' in the post data
         req = Rack::Request.new(env)
-        puts req.POST
+        # puts req.POST
         
         if req.POST.has_key? 'value'
             val = Base64.decode64(req.POST['value'])
         else
-            val = ''
+            val = 'error'
         end
         
         if req.POST.has_key? 'filename' and req.POST['filename'] != ''
@@ -24,11 +24,11 @@ run Proc.new { |env|
             filename = 'openmm.py'
         end
         
-        response = [200, {'Content-type' => 'application/x-download',
+        response = [200, {'Content-type' => 'application/plain',
                           'Content-Description' => 'File Transfer',
                           'Content-Disposition' => "attachment; filename=#{filename}"},
                    [val]]
-        puts response
+        # puts val
 
     else
         # respond with the index page to everything else

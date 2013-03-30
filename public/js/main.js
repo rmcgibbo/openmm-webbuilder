@@ -76,9 +76,11 @@ $(function () {
       filename_input[0].value = filename_input.attr('placeholder');
     }
   
-    var code = Base64.encode($('#code').data('rawcode'));
-    script_input.attr('type', 'hidden').attr('value', code).appendTo(form);
-
+    // need to escape out some html entities
+    var rawcode = $('<div />').html($('#code').data('rawcode')).text();
+    var b64code = Base64.encode(rawcode)
+    script_input.attr('type', 'hidden').attr('value', b64code).appendTo(form);
+    
     form.submit();
     
     // reset it, if we messed w/ the form
