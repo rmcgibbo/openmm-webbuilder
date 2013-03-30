@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>OpenMM WebBuilder</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap, jQuery -->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
+    <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
+
+    <!-- underscore.js, backbone.js -->
+    <script src="http://documentcloud.github.com/underscore/underscore-min.js"></script>    
+    <script src="http://documentcloud.github.com/backbone/backbone-min.js"></script>
+    
+    <!-- Backbone Forms -->
+    <script src="https://raw.github.com/powmedia/backbone-forms/master/distribution/backbone-forms.js"></script>
+    <script src="https://raw.github.com/powmedia/backbone-forms/master/distribution/editors/list.js"></script>
+    <script src="https://raw.github.com/powmedia/backbone-forms/master/distribution/adapters/backbone.bootstrap-modal.js"></script>  
+    <script src="https://raw.github.com/powmedia/backbone-forms/master/distribution/templates/bootstrap.js"></script>
+    
+
+    <!-- Google Code Prettifier (rendering the script)-->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/prettify/r224/prettify.js" type="text/javascript"></script>
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/prettify/r224/prettify.css" type="text/css">
+    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?autorun=false"></script>
+
+    <!-- Mustache templates -->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/mustache.js/0.7.2/mustache.min.js"></script>
+    <script src="https://raw.github.com/postal2600/jquery-chevron/master/chevron.js"></script>
+    
+    <!-- BootBox alerts -->
+    <script src="https://raw.github.com/makeusabrew/bootbox/v3.2.0/bootbox.min.js"></script>
+
+    <link href="template.mustache" rel="template" id="template-mustache"/>
+    <script src="schema.js"></script>
+    <link href="style.css" rel="stylesheet">
+    <script src="main.js"></script>
+
+    
+  </head>
+  <body>
+
+<!-- Navbar At Top of Page -->
+<div class="navbar navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="#">OpenMM-Builder</a>
+      <div class="nav-collapse collapse">
+        <ul class="nav">
+          <!-- <li><a href='#'>Home</a></li> -->
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Get Help</a>
+            <ul class="dropdown-menu">
+              <li><a href="http://www.scribd.com/doc/133048853/Open-Mm-Users-Guide" target="_blank">OpenMM User Guide »</a></li>
+              <li><a href="https://simtk.org/api_docs/openmm/api5_0/python/" target="_blank">OpenMM Python API Docs »</a></li>
+            </ul>
+        </ul>
+      </div><!--/.nav-collapse -->
+      
+      <div class="pull-right">
+        <!-- <button class="btn">Save Gist</button> -->
+        <button id="save-script-local" class="btn">Save Script</button>
+      </div>
+      
+    </div>
+  </div>
+</div>
+<!--  End NavBar-->
+
+
+<!-- Two column layout -->
+<div class="container-fluid">
+  <div class="row-fluid">
+    <div class="span3">
+      <ul id="sidebar-tab" class="nav nav-pills nav-tabs">
+        <li class="active"><a href="#general">General</a></li>
+        <li><a href="#system">System</a></li>
+        <li><a href="#integrator">Integrator</a></li>
+        <li><a href='#simulation'>Simulation</a></li>
+      </ul>
+      <!--Sidebar content-->
+      <div class="tab-content">
+        <div class="tab-pane fade in active" id="general"><div id="sidepane-general"></div></div>
+        <div class="tab-pane fade in" id="system"><div id="sidepane-system"></div></div>
+        <div class="tab-pane fade in" id="integrator"><div id="sidepane-integrator"></div></div>
+        <div class="tab-pane fade in" id="simulation"><div id="sidepane-simulation"></div></div>
+      </div>
+      
+    </div>
+    <div class="span1"></div>
+    <div class="span6">
+      <!--Body content-->
+      <pre id="code"></pre>
+    </div>
+  </div>
+</div>
+
+
+</body>
+</html>
+
+
