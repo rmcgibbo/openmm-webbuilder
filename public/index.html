@@ -4,6 +4,8 @@
     <title>OpenMM WebBuilder</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon"> 
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon"> 
 
     <!-- Bootstrap, jQuery -->
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
@@ -42,13 +44,16 @@
     <!-- but keep this app stuff unmified, for easier development -->
     <script src="js/models.js"></script>
     <script src="js/views.js"></script>
-    <script src="js/main.js"></script> -->
+    <script src="js/main.js"></script>  
 
   </head>
   <body>
 
+<a href="https://github.com/rmcgibbo/openmm-webbuilder"><img style="position: absolute; top: 0; right: 0; border: 0; z-index:999999" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>    
+
+
 <!-- Navbar At Top of Page -->
-<div class="navbar navbar-fixed-top">
+<div class="navbar navbar-top">
   <div class="navbar-inner">
     <div class="container">
       <a class="brand" href="#">OpenMM-Builder</a>
@@ -61,19 +66,19 @@
               <li><a href="http://www.scribd.com/doc/133048853/Open-Mm-Users-Guide" target="_blank">OpenMM User Guide »</a></li>
               <li><a href="https://simtk.org/api_docs/openmm/api5_0/python/" target="_blank">OpenMM Python API Docs »</a></li>
             </ul>
+          <li class="divider-vertical"></li>
         </ul>
       </div><!--/.nav-collapse -->
       
-      <form id="save-form" method="post" action="/save" class="navbar-form pull-right">
-        <button type="button" id="save-script-local" class="btn">Save</button>
+      <form id="save-form" method="post" action="/save" class="navbar-form">
         <input name="filename" placeholder="openmm.py" type="text" style="width:100px">
+        <button type="button" id="save-script-local" class="btn">Save Script</button>
       </form>
       
     </div>
   </div>
 </div>
 <!--  End NavBar-->
-
 
 <!-- Two column layout -->
 <div class="container-fluid">
@@ -99,8 +104,18 @@
       <pre id="code"></pre>
     </div>
   </div>
+
 </div>
 
+<div class="wrap">
+  <div id="footer">
+    <div class="span2"></div>
+    <div class="span8"><p class="muted credit">
+      Courtesy of <a href="http://stanford.edu/~rmcgibbo/">Robert McGibbon</a>,
+      code on <a href="https://github.com/rmcgibbo/openmm-webbuilder">github</a>.
+    </p></div>
+  </div>
+</div>
 
 </body>
 </html>
