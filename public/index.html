@@ -44,7 +44,58 @@
     <!-- but keep this app stuff unmified, for easier development -->
     <script src="js/models.js"></script>
     <script src="js/views.js"></script>
-    <script src="js/main.js"></script>  
+    <script src="js/main.js"></script>
+    
+    
+    <!-- Hacking save-to-gist -->
+    <script type="text/javascript">$(function() {
+
+    // Step 2
+    $('#login-github').click(function () {
+      console.log('sfd');
+      window.open('https://github.com' + 
+        '/login/oauth/authorize' + 
+          '?client_id=a6a4c15c8e5250bea5c1' +
+          '&scope=gist');
+    });
+    
+    // Step 4
+    window.addEventListener('message', function (event) {
+      var code = event.data;
+      $('#code').val(code);
+
+      // Step 5
+      $.get('token?code=' + code, function (access_token) {
+        // Step 7
+        console.log(access_token);
+        $('#access-token').val(access_token);
+        $.getJSON('https://api.github.com/user?access_token=' + access_token, function (user) {
+          $('#username').val(user.login);
+        });
+      });
+    });
+    
+    $('#save-script-gist').click(function () {
+      var url = 'https://api.github.com/gists' +
+        '?access_token=' + $('#access-token').val();
+
+      var data = JSON.stringify({
+        "public": false,
+        "files": {
+          "sample.txt": {
+            "content": 'content'
+          }
+        }
+      });
+
+      $.post(url, data, function (gist) {
+        // $('#gist_link').val(gist.html_url);
+        console.log('gist link');
+        console.log(gist.html_url);
+      });
+});
+    
+    });</script>
 
   </head>
   <body>
@@ -67,14 +118,19 @@
               <li><a href="https://simtk.org/api_docs/openmm/api5_0/python/" target="_blank">OpenMM Python API Docs »</a></li>
             </ul>
           <li class="divider-vertical"></li>
+          <li>
+            <form id="save-form" method="post" action="/save" class="navbar-form">
+              <input name="filename" placeholder="openmm.py" type="text" style="width:100px">
+              <button type="button" id="save-script-local" class="btn">Save Script</button>
+            </form>
+          </li>
+          <li><button type="button" id="save-script-gist" class="btn">Save to Gist</button></li>
+          <li><button class="btn" id="login-github">Login Github</button></li>
+          <li><label>access code <input type="text" id="access-code"></input></label></li>
+          <li><label>access_token <input type="text" id="access-token"></input></label></li>
+          <li><label>username <input type="text" id="username"></input></label></li>
         </ul>
-      </div><!--/.nav-collapse -->
-      
-      <form id="save-form" method="post" action="/save" class="navbar-form">
-        <input name="filename" placeholder="openmm.py" type="text" style="width:100px">
-        <button type="button" id="save-script-local" class="btn">Save Script</button>
-      </form>
-      
+      </div><!--/.nav-collapse -->      
     </div>
   </div>
 </div>
