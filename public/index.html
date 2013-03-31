@@ -26,7 +26,7 @@
     <!-- Mustache templates -->
     <script src="//cdnjs.cloudflare.com/ajax/libs/mustache.js/0.7.2/mustache.min.js"></script>
 
-   <!-- my stuff --> 
+    <!-- my stuff --> 
     <link href="templates/template.mustache" rel="template" id="template-mustache"/>
     <link href="css/style.css" rel="stylesheet">
     
@@ -45,121 +45,8 @@
     <!-- but keep this app stuff unmified, for easier development -->
     <script src="js/models.js"></script>
     <script src="js/views.js"></script>
+    <script src="js/gist.js"></script>
     <script src="js/main.js"></script>
-    
-    
-    <!-- Hacking save-to-gist -->
-    <script type="text/javascript">$(function() {
-	var load_token_from_dom = function() {
-	    // get the access token from local storage or the DOM
-	    // if the token hasn't been retreived yet, this'll return
-	    // undefined.
-	    if (Modernizr.localstorage) {
-		var token = localStorage.getItem('github-access-token');
-	    } else {
-		var token = $('#save-script-gist').data('github-access-token');
-	    }
-	    return token;
-	};
-
-	var save_token_to_dom = function (access_token) {
-	    // save the access token in local storage, if avaialable, or
-	    // in the DOM. local storage is nice since it is persistent
-	    // if the user refeshes
-	    if (Modernizr.localstorage) {
-		localStorage.setItem('github-access-token', access_token);
-	    } else {
-		$('#save-script-gist').data('github-access-token', access_token);
-	    }
-	};
-
-	var load_gist_id = function () {
-	    if (Modernizr.localstorage) {
-		var id = localStorage.getItem('github-gist-id');
-	    } else {
-		var id = window['github-gist-id']; 
-	    }
-	    return id;
-	}
-
-	var save_gist_id = function(id) {
-	    if (Modernizr.localstorage) {
-		localStorage.setItem('github-gist-id', id);
-	    } else {
-		window['github-gist-id'] = id;
-	    }
-	}
-
-	var send_gist = function () {
-	    // get the filename
-	    var filename = $('#save-form input[name="filename"]').val();
-	    if (filename == '') {
-		filename = $('#save-form input[name="filename"]').attr('placeholder');
-	    }
-	    // get the code from the DOM
-	    var rawcode =  $('<div />').html($('#code').data('rawcode')).text();
-
-	    if (load_gist_id() != undefined) {
-		console.log('update');
-
-		// if the gist has already been saved
-		$.ajax(url, {
-		    url: 'https://api.github.com/gists/' + load_gist_id() + 
-			'?access_token=' + load_token_from_dom(),
-		    type: 'PATCH',
-		    data: JSON.stringify({
-			files: {filename: {content: rawcode}}
-		    }),
-		    sucess: function (gist) {
-			console.log('sucess');
-			if ($('#gist-link').length == 0) {
-			    var link = $('<li id="gist-link"><a target="_blank" href="' + 
-					 gist.html_url +  '">Gist</a>');
-			    $('.navbar ul.nav').append(link);
-			}
-		    }
-		});
-
-	    } else {
-		var url = 'https://api.github.com/gists' +
-		    '?access_token=' + load_token_from_dom();
-		var data = JSON.stringify({
-		    "public": true,
-		    "files": {filename: {"content": rawcode}}
-		});
-	 	$.post(url, data, function (gist) {
-		    // make a new link in the nav bar to the new gist
-		    var link = $('<li id="gist-link"><a target="_blank" href="' + 
-				 gist.html_url +  '">Gist</a>');
-		    save_gist_id(gist.id);
-		    $('.navbar ul.nav').append(link);
-		});
-	    }
-	};
-
-	// Step 4
-	window.addEventListener('message', function (event) {
-	    var code = event.data;
-	    // Step 5
-	    $.get('token?code=' + code, function (access_token) {
-		// Step 7
-		save_token_to_dom(access_token);
-		send_gist();
-	    });
-	});
-	
-	$('#save-script-gist').click(function () {
-	    if (load_token_from_dom() == undefined) {
-		//Step 2
-		window.open('https://github.com' + 
-			    '/login/oauth/authorize' + 
-			    '?client_id=a6a4c15c8e5250bea5c1' +
-			    '&scope=gist');
-		return;
-	    }
-	    send_gist();
-	});
-    });</script>
 
   </head>
   <body>
@@ -188,8 +75,11 @@
               <button type="button" id="save-script-local" class="btn">Save Script</button>
             </form>
           </li>
-          <li><button type="button" id="save-script-gist" class="btn">Save to Gist</button></li>
+          <!-- <li><button type="button" id="save-script-gist" class="btn">Save to Gist</button></li> -->
         </ul>
+        
+
+        
       </div><!--/.nav-collapse -->      
     </div>
   </div>
