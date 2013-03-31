@@ -6,12 +6,7 @@ from urllib import urlencode
 def urldecode(s):
     return dict(urlparse.parse_qsl(s))
 
-import flask
-from flask import request
-from flask import Response
-from flask import Flask
-
-
+from flask import request, Response, Flask, abort
 app = Flask(__name__)
 
 ##############################################################################
@@ -38,21 +33,33 @@ def login():
 
 @app.route('/js/<filename>')
 def js(filename):
-    return Response(open(os.path.join('public', 'js', filename)).read(),
+    path = os.path.join('public', 'js', filename)
+    if not os.path.exists(path):
+        abort(404)
+    return Response(open(path).read(),
                     mimetype='text/javascript')
 
 @app.route('/css/<filename>')
 def css(filename):
-    return Response(open(os.path.join('public', 'css', filename)).read(),
+    path = os.path.join('public', 'css', filename)
+    if not os.path.exists(path):
+        abort(404)
+    return Response(open(path).read(),
                     mimetype='text/css')
 
 @app.route('/images/<filename>')
 def images(filename):
-    return open(os.path.join('public', 'images', filename)).read()
+    path = os.path.join('public', 'images', filename)
+    if not os.path.exists(path):
+        abort(404)
+    return open(path).read()
 
 @app.route('/templates/<filename>')
 def templates(filename):
-    return open(os.path.join('public', 'templates', filename)).read()
+    path = os.path.join('public', 'templates', filename)
+    if not os.path.exists(path):
+        abort(404)
+    return open(path).read()
 
 ##############################################################################
 # serve /save, which basically ecohos some data as a download
