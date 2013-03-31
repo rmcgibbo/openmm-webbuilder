@@ -3,21 +3,12 @@
 _webapp for generating custom OpenMM scripts_
 
 ## Development
-The app is almost 100% javscript, running in the browser. The only function that requires
-server interaction is the 'save' button. To run the development server with `rack`
-(this is how it's being served on heroku) you need ruby and the bundler gem. I followed the
-directions here https://devcenter.heroku.com/articles/static-sites-ruby to create the app structure.
-If you've got this stuff installed, you can start the development server on port 9292 with
+The app is almost 100% javscript, running in the browser. But interaction with the server is required
+for saving the script to disk and saving the script to gist. To run the development server on
+http://locahost:5000, run
 
 ```
-$ rackup
-```
-
-If you have (and don't want to install) `ruby`/`rack`, you can start up a simple development server
-with python. All the files will be served correctly, but the save button will NOT work.
-
-```
-$ cd public && python -m SimpleHTTPServer 9292
+python app.py
 ```
 
 ## Rebuilding the minified libraries
