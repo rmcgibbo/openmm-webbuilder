@@ -1,3 +1,7 @@
+# python
+venv/
+*.pyc
+
 lib-cov
 *.seed
 *.log

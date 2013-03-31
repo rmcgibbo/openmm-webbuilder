@@ -126,9 +126,10 @@ $(function () {
     if (gist.get_token() == undefined) {
       //Step 2
       window.open('https://github.com' + 
-        '/login/oauth/authorize' + 
-        '?client_id=a6a4c15c8e5250bea5c1' +
-        '&scope=gist');
+          '/login/oauth/authorize' + 
+          '?client_id=a6a4c15c8e5250bea5c1' +
+          '?redirect_uri=' + window.location.origin + '/login' + 
+          '&scope=gist');
         return;
     }
 
