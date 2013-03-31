@@ -112,7 +112,7 @@
 		    }),
 		    sucess: function (gist) {
 			console.log('sucess');
-			if $('#gist-link'.length == 0) {
+			if ($('#gist-link').length == 0) {
 			    var link = $('<li id="gist-link"><a target="_blank" href="' + 
 					 gist.html_url +  '">Gist</a>');
 			    $('.navbar ul.nav').append(link);
