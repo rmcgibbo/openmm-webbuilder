@@ -11,6 +11,7 @@
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
     <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
 
     <!-- underscore.js, backbone.js -->
     <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
@@ -49,52 +50,115 @@
     
     <!-- Hacking save-to-gist -->
     <script type="text/javascript">$(function() {
+	var load_token_from_dom = function() {
+	    // get the access token from local storage or the DOM
+	    // if the token hasn't been retreived yet, this'll return
+	    // undefined.
+	    if (Modernizr.localstorage) {
+		var token = localStorage.getItem('github-access-token');
+	    } else {
+		var token = $('#save-script-gist').data('github-access-token');
+	    }
+	    return token;
+	};
 
-    // Step 2
-    $('#login-github').click(function () {
-      console.log('sfd');
-      window.open('https://github.com' + 
-        '/login/oauth/authorize' + 
-          '?client_id=a6a4c15c8e5250bea5c1' +
-          '&scope=gist');
-    });
-    
-    // Step 4
-    window.addEventListener('message', function (event) {
-      var code = event.data;
-      $('#code').val(code);
+	var save_token_to_dom = function (access_token) {
+	    // save the access token in local storage, if avaialable, or
+	    // in the DOM. local storage is nice since it is persistent
+	    // if the user refeshes
+	    if (Modernizr.localstorage) {
+		localStorage.setItem('github-access-token', access_token);
+	    } else {
+		$('#save-script-gist').data('github-access-token', access_token);
+	    }
+	};
 
-      // Step 5
-      $.get('token?code=' + code, function (access_token) {
-        // Step 7
-        console.log(access_token);
-        $('#access-token').val(access_token);
-        $.getJSON('https://api.github.com/user?access_token=' + access_token, function (user) {
-          $('#username').val(user.login);
-        });
-      });
-    });
-    
-    $('#save-script-gist').click(function () {
-      var url = 'https://api.github.com/gists' +
-        '?access_token=' + $('#access-token').val();
+	var load_gist_id = function () {
+	    if (Modernizr.localstorage) {
+		var id = localStorage.getItem('github-gist-id');
+	    } else {
+		var id = window['github-gist-id']; 
+	    }
+	    return id;
+	}
 
-      var data = JSON.stringify({
-        "public": false,
-        "files": {
-          "sample.txt": {
-            "content": 'content'
-          }
-        }
-      });
+	var save_gist_id = function(id) {
+	    if (Modernizr.localstorage) {
+		localStorage.setItem('github-gist-id', id);
+	    } else {
+		window['github-gist-id'] = id;
+	    }
+	}
 
-      $.post(url, data, function (gist) {
-        // $('#gist_link').val(gist.html_url);
-        console.log('gist link');
-        console.log(gist.html_url);
-      });
-});
-    
+	var send_gist = function () {
+	    // get the filename
+	    var filename = $('#save-form input[name="filename"]').val();
+	    if (filename == '') {
+		filename = $('#save-form input[name="filename"]').attr('placeholder');
+	    }
+	    // get the code from the DOM
+	    var rawcode =  $('<div />').html($('#code').data('rawcode')).text();
+
+	    if (load_gist_id() != undefined) {
+		console.log('update');
+
+		// if the gist has already been saved
+		$.ajax(url, {
+		    url: 'https://api.github.com/gists/' + load_gist_id() + 
+			'?access_token=' + load_token_from_dom(),
+		    type: 'PATCH',
+		    data: JSON.stringify({
+			files: {filename: {content: rawcode}}
+		    }),
+		    sucess: function (gist) {
+			console.log('sucess');
+			if $('#gist-link'.length == 0) {
+			    var link = $('<li id="gist-link"><a target="_blank" href="' + 
+					 gist.html_url +  '">Gist</a>');
+			    $('.navbar ul.nav').append(link);
+			}
+		    }
+		});
+
+	    } else {
+		var url = 'https://api.github.com/gists' +
+		    '?access_token=' + load_token_from_dom();
+		var data = JSON.stringify({
+		    "public": true,
+		    "files": {filename: {"content": rawcode}}
+		});
+	 	$.post(url, data, function (gist) {
+		    // make a new link in the nav bar to the new gist
+		    var link = $('<li id="gist-link"><a target="_blank" href="' + 
+				 gist.html_url +  '">Gist</a>');
+		    save_gist_id(gist.id);
+		    $('.navbar ul.nav').append(link);
+		});
+	    }
+	};
+
+	// Step 4
+	window.addEventListener('message', function (event) {
+	    var code = event.data;
+	    // Step 5
+	    $.get('token?code=' + code, function (access_token) {
+		// Step 7
+		save_token_to_dom(access_token);
+		send_gist();
+	    });
+	});
+	
+	$('#save-script-gist').click(function () {
+	    if (load_token_from_dom() == undefined) {
+		//Step 2
+		window.open('https://github.com' + 
+			    '/login/oauth/authorize' + 
+			    '?client_id=a6a4c15c8e5250bea5c1' +
+			    '&scope=gist');
+		return;
+	    }
+	    send_gist();
+	});
     });</script>
 
   </head>
@@ -125,10 +189,6 @@
             </form>
           </li>
           <li><button type="button" id="save-script-gist" class="btn">Save to Gist</button></li>
-          <li><button class="btn" id="login-github">Login Github</button></li>
-          <li><label>access code <input type="text" id="access-code"></input></label></li>
-          <li><label>access_token <input type="text" id="access-token"></input></label></li>
-          <li><label>username <input type="text" id="username"></input></label></li>
         </ul>
       </div><!--/.nav-collapse -->      
     </div>
