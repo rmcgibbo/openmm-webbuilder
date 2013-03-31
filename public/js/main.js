@@ -33,7 +33,10 @@ $(function () {
           label.append('<a class="sidebar-label" href="#">' + name +'</a>');
 
           if ('help' in options) {
-            label.popover({content: options.help});
+            label.popover({content: options.help,
+                           placement: 'bottom',
+                           delay: { show: 500, hide: 100 },
+                           trigger: 'hover'});
 
           }
       }

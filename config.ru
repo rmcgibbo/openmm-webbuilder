@@ -32,6 +32,7 @@ end
 
 def github_token(env)
     req = Rack::Request.new(env)
+    puts req.GET
     res = Typhoeus::Request.post('https://github.com/login/oauth/access_token',
         :params => {
             'code' => req.GET['code'],
@@ -39,7 +40,10 @@ def github_token(env)
             'client_secret' => '2613f8a86a4aed1c7f87d25eb31a403ad347467f',
             'grant_type' => 'authorization_code'
         })
+    puts res.inspect
     results = CGI.parse(res.body)
+    puts results
+    
     [200, {'Content-Type' => 'text/html',
           'Cache-Control' => 'public, max-age=86400'}, [results['access_token']]]
 end
