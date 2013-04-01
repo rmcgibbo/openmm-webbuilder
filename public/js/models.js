@@ -213,7 +213,7 @@ Integrator = Backbone.Model.extend({
 
   visibility: {
     friction: function(attrs) {
-      return _.contains(['Brownian', 'Langevin'], attrs.kind);
+      return _.contains(['Brownian', 'Langevin'], attrs.kind) || attrs.thermostat == 'Andersen';
     },
     temperature: function(attrs) {
       return _.contains(['Brownian', 'Langevin'], attrs.kind) || attrs.thermostat == 'Andersen';
