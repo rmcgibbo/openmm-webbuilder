@@ -13,19 +13,37 @@ $(function () {
       }).render();
     
       // make the form revalidate when anything is changed
-      form.on('change', function(form, editor) {
+      form.on('change', function(form) {
           form.commit({validate: true});
+
+          // run the visibility functions to toggle
+          // the show/hide of the form elements
+          var attrs = form.model.attributes;
+          for (key in form.model.visibility) {
+            var visible = form.model.visibility[key](attrs);
+            //console.log(form.fields);
+
+            if (visible) {
+              form.fields[key].$el.fadeTo(200, 1);
+            } else {
+              form.fields[key].$el.fadeTo(200, 0.2);
+            }
+          }
       });
-      
+
       //add the form to the dom, and to our collection
       $(model.el).append(form.el);
       collection.add(model);
-    
+
+      // trigger the change event at the very beginning, to run the
+      // visibility code
+      form.trigger('change', form);
+
       // install the popover help text
       for (var key in model.schema) {
           var options = model.schema[key];
           var label = $('label[for="' + form.options.idPrefix + key + '"]');
-          
+
           // move the labels innerhtml into a <a> tag inside, so that
           // users can see that there will be popover text, since its an a
           var name = label[0].innerHTML;
@@ -35,9 +53,8 @@ $(function () {
           if ('help' in options) {
             label.popover({content: options.help,
                            placement: 'bottom',
-                           delay: { show: 500, hide: 100 },
+                           delay: { show: 300, hide: 100 },
                            trigger: 'hover'});
-
           }
       }
     
