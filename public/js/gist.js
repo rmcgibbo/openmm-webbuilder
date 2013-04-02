@@ -106,7 +106,7 @@ $(function () {
   
   // place a new 
   $('.navbar ul.nav').after(' \
-  <ul id="navbar-gist" class="navbar-form pull-right" style="padding-right:120px" > \
+  <ul id="navbar-gist" class="navbar-form" > \
     <button id="save-script-gist" type="submit" class="btn">Save Gist</button> \
   </ul>');
 
@@ -125,12 +125,14 @@ $(function () {
   $('#save-script-gist').click(function () {
     if (gist.get_token() == undefined) {
       //Step 2
-      window.open('https://github.com' + 
-          '/login/oauth/authorize' + 
-          '?client_id=a6a4c15c8e5250bea5c1' +
-          '?redirect_uri=' + window.location.origin + '/login' + 
-          '&scope=gist');
+      if (window.location.origin != 'http://openmm.herokuapp.com') {
+        bootbox.alert('Sorry, this only works deployed on openmm.herokuapp.com')
+      } else {
+        var uri = 'https://github.com/login/oauth/authorize' + 
+            '?client_id=a6a4c15c8e5250bea5c1&scope=gist';
+        window.open(uri);
         return;
+      }
     }
 
     if (gist.get_id()) {

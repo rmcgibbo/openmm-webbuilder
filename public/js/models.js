@@ -90,7 +90,8 @@ General = Backbone.Model.extend({
     cuda_precision: {type: 'Select', options: ['single', 'mixed', 'double'],
                      title: 'CUDA precision',
                      help: 'The precision of the CUDA platform'},
-    device: {type: 'Number', title: 'GPU device index',
+    device: {type: 'Text', title: 'GPU device index',
+             validators: validators.integer,
              help: 'Specify the device (GPU) number'},
   },
 
@@ -166,6 +167,7 @@ System = Backbone.Model.extend({
     nb_cutoff: '1.0 nm',
     gentemp: '300 K',
   },
+  
 
   jsonify: function () {
     raw = this.toJSON();
@@ -196,7 +198,7 @@ Integrator = Backbone.Model.extend({
                help: 'Activate pressure coupling (NPT)'},
     pressure: {type: 'Text', help: 'Pressure to use for pressure coupling',
                validators: validators.units.pressure},
-    barostat_step: {type: 'Number', title: 'barostat interval',
+    barostat_step: {type: 'Text', title: 'barostat interval',
               help:'Step interval for MC barostat volume adjustments.'},
     thermostat: {type: 'Select', options: ['None', 'Andersen']},
   },
@@ -226,7 +228,10 @@ Integrator = Backbone.Model.extend({
     },
     thermostat: function(attrs) {
       return attrs.kind == 'Verlet';
-    }
+    },
+    barostat: function(attrs) {
+      return attrs.kind == 'Langevin' || attrs.kind == 'Brownian' || attrs.thermostat == 'Andersen';
+    },
   },
 
   jsonify: function () {
@@ -251,22 +256,22 @@ Simulation = Backbone.Model.extend({
   el: '#sidepane-simulation',
   name: 'simulation',
   schema: {
-    equil_steps: {type: 'Number', title: 'equilibration steps',
+    equil_steps: {type: 'Text', title: 'equilibration steps',
                   validaotrs: validators.integer,
                   help: 'Number of steps for production'},
-    prod_steps: {type: 'Number', title: 'production steps',
+    prod_steps: {type: 'Text', title: 'production steps',
                  validators: validators.integer,
                  help: 'Number of steps to take in the simulation'},
     minimize: {type: 'Select', options: ['true', 'false'],
                title: 'minimize?',
                help: 'Should we run energy minimization first?'},
-    minimize_iters: {type: 'Number', title: 'max minimize steps',
+    minimize_iters: {type: 'Text', title: 'max minimize steps',
                      validators: validators.integer,
                      help: 'Maximum number of steps for the minimizer.'},
     dcd_reporter: {type: 'Select', options: ['true', 'false'],
                    title: 'DCD reporter?',
                    help: 'Attach a DCD Reporter, to save the trajectory'},
-    dcd_freq: {type: 'Number', title: 'DCD freq [steps]',
+    dcd_freq: {type: 'Text', title: 'DCD freq [steps]',
                validators: validators.integer,
                help: 'Freqnency, in steps, with which to save the positions \
                       to the DCD file'},

@@ -45,6 +45,10 @@ a.sidebar-label {
 html, body {
   height: 100%;
 }
+
+.clear-for-footer {
+  min-height: 60px;
+}
 .wrapper {
   min-height: 100%;
   height: auto !important;
