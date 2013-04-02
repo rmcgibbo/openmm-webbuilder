@@ -99,7 +99,11 @@ var OpenMMScriptView = Backbone.View.extend({
 
     if (d.integrator.barostat == 'Monte Carlo') {
       r += "system.addForce(MonteCarloBarostat(" + replace_unit(d.integrator.pressure);
-      r += ', ' + d.integrator.temperature + "))\n";
+      r += ', ' + d.integrator.temperature;
+      if (d.integrator.barostat_step.length > 0) {
+        r += ', ' +  d.integrator.barostat_step;
+      }
+      r += "))\n";
     }
 
     if (d.integrator.thermostat == 'Andersen') {

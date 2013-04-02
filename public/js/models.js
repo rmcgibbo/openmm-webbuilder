@@ -228,7 +228,8 @@ Integrator = Backbone.Model.extend({
     pressure: {type: 'Text', help: 'Pressure target to use for pressure coupling',
                validators: ['pressure']},
     barostat_step: {type: 'Text', title: 'Barostat interval',
-              help:'Step interval for MC barostat volume adjustments.'},
+                    validators: ['pos_integer'],
+                    help:'Step interval for MC barostat volume adjustments.'},
     thermostat: {type: 'Select', options: ['None', 'Andersen']},
   },
 
@@ -298,7 +299,7 @@ Simulation = Backbone.Model.extend({
                    title: 'DCD reporter?',
                    help: 'Attach a DCD Reporter, to save the trajectory'},
     dcd_freq: {type: 'Text', title: 'DCD freq [steps]',
-               validators: ['pos_integer'],
+               validators: ['pos_integer', 'required'],
                help: 'Freqnency, in steps, with which to save the positions \
                       to the DCD file'},
     dcd_file: {type: 'Text', title: 'DCD filename',
@@ -309,7 +310,7 @@ Simulation = Backbone.Model.extend({
                                 to print some statistics to stdout as the \
                                 simulation is running'},
     statedata_freq: {type: 'Text', title: 'StateData freq [steps]',
-                     validators: ['pos_integer'],
+                     validators: ['pos_integer', 'required'],
                      help: 'Frequency, in steps, to print the StateData \
                             statistics to stdout'},
   },
