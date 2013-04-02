@@ -11,7 +11,7 @@ $(function () {
           idPrefix: key + '-',
           model : model,
       }).render();
-    
+
       // make the form revalidate when anything is changed
       form.on('change', function(form) {
           form.commit({validate: true});
@@ -57,7 +57,7 @@ $(function () {
                            trigger: 'hover'});
           }
       }
-    
+
      // remove the help-block installed by Backbone.Form, since we're
      // using the popover
      $(form.el).find('.help-block').remove();
@@ -83,31 +83,36 @@ $(function () {
 
 // respond to the click event on the save-script button
 $(function () {
-  $('#save-script-local').click(function() {
+  save_script_local = function (e) {
+    e.preventDefault();
     var form = $('#save-form');
 
     var script_input = $("<input name='value'></input");
     var filename_input = form.find('input[name="filename"]')
-    
+
     // check if no value has been entered for the filename
     var set_value_from_placeholder = false;
     if (filename_input[0].value == '') {
       set_value_from_placeholder = true;
       filename_input[0].value = filename_input.attr('placeholder');
     }
-  
+
     // need to escape out some html entities
     var rawcode = $('#code').text();
     var b64code = Base64.encode(rawcode)
     script_input.attr('type', 'hidden').attr('value', b64code).appendTo(form);
-    
-    
+
+
     form.submit();
-    
+
     // reset it, if we messed w/ the form
     if (set_value_from_placeholder) {
       filename_input[0].value = '';
     }
-    
-  });
+
+  };
+
+  Mousetrap.bind(['command+s', 'ctrl+s'], save_script_local);
+  $('#save-script-local').click(save_script_local);
+
 });

@@ -1,18 +1,18 @@
 /*
- tools to interact with github gist via oAuth.
- 
- note: this also depends on the login.html form, which is served
- by the server on /login, and redirected to via github's oath.
- 
- this also depends on the /token endpoint for the server, which
- can trade a oath "code" for a token
- */
+    tools to interact with github gist via oAuth.
+
+    note: this also depends on the login.html form, which is served
+    by the server on /login, and redirected to via github's oath.
+
+    this also depends on the /token endpoint for the server, which
+    can trade a oath "code" for a token
+    */
 
 
 var Gist = function(el) {
   this._id = undefined;
   this.base_url = 'https://api.github.com/gists';
-  
+
   this.get_token = function () {
     // get the oauth access token (from localstorage)
     if (Modernizr.localstorage) {
@@ -20,7 +20,7 @@ var Gist = function(el) {
     }
     return this._token;
   };
-  
+
   this.set_token = function (access_token) {
     // save the oauth access token (to localstorage)
     if (Modernizr.localstorage) {
@@ -34,12 +34,12 @@ var Gist = function(el) {
     // get the gist's id
     return this._id;
   };
-  
+
   this.set_id = function (id) {
     // set the gist's id
     this._id = id;
   };
-  
+
   this.files = function () {
     // retreive the content from the dom
     var rawcode =  $('#code').text();
@@ -52,7 +52,7 @@ var Gist = function(el) {
     values[filename] = {'content': rawcode}
     return values;
   };
-  
+
   this.post_gist = function () {
     // post the gist to github
     self = this;
@@ -60,7 +60,7 @@ var Gist = function(el) {
     $.post(this.base_url + '?access_token=' + this.get_token(),
       JSON.stringify({public: true, files: this.files()}),
       function (gist) {
-        
+
         $('#navbar-gist').append('<a id="view-gist" href="' + gist.html_url + '" target="_blank" class="btn btn-success">View</a>');
         $('#save-script-gist').html('Update Gist');
         self.set_id(gist.id);
@@ -69,11 +69,11 @@ var Gist = function(el) {
       }
     );
   };
-  
+
   this.update_gist = function () {
     // update the gist on github
     var url = this.base_url + '/' + this.get_id() + '?access_token=' + this.get_token();
-    
+
     self = this;
     $.ajax(url, {
       type: 'PATCH',
@@ -96,15 +96,15 @@ var Gist = function(el) {
           }]);
       }
     });
-    
+
   };
 } // end class
 
 
 // main method that uses the class
 $(function () {
-  
-  // place a new 
+
+  // place a new
   $('.navbar ul.nav').after(' \
   <ul id="navbar-gist" class="navbar-form" > \
     <button id="save-script-gist" type="submit" class="btn">Save Gist</button> \
@@ -128,7 +128,7 @@ $(function () {
       if (window.location.origin != 'http://openmm.herokuapp.com') {
         bootbox.alert('Sorry, this only works deployed on openmm.herokuapp.com')
       } else {
-        var uri = 'https://github.com/login/oauth/authorize' + 
+        var uri = 'https://github.com/login/oauth/authorize' +
             '?client_id=a6a4c15c8e5250bea5c1&scope=gist';
         window.open(uri);
         return;
@@ -140,6 +140,6 @@ $(function () {
     } else {
       gist.post_gist();
     }
-    
+
   });
 });
