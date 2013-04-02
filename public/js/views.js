@@ -115,14 +115,26 @@ var OpenMMScriptView = Backbone.View.extend({
 
     r += "platform = Platform.getPlatformByName('" + d.general.platform + "')\n"
     if (opt.cuda) {
-      r += "properties = {'CudaDeviceIndex': '" + d.general.device;
-      r += "', 'CudaPrecision': '" + d.general.precision + "'}\n";
-    } else if (opt.open_cl) {
-      r += "properties = {'OpenCLDeviceIndex': '" + d.general.device + "', ";
-      if (d.general.opencl_plat_index.length > 0) {
-        r += "'OpenCLPlatformIndex': '" + d.general.opencl_plat_index + "',\n              ";
+      r += "properties = {'CudaPrecision': '" + d.general.precision + "'";
+      if (d.general.device.length > 0) {
+        r += ", 'CudaDeviceIndex': '" + d.general.device + "'";
       }
-      r += "'OpenCLPrecision': '" +  d.general.precision + "'}\n";
+      r += "}\n"
+
+    } else if (opt.open_cl) {
+      r += "properties = {'OpenCLPrecision': '" + d.general.precision + "'";
+      if (d.general.opencl_plat_index.length > 0) {
+        r += ", 'OpenCLPlatformIndex': '" + d.general.opencl_plat_index + "'";
+      }
+      if (d.general.device.length > 0) {
+        r += ", ";
+        if (d.general.opencl_plat_index.length > 0) {
+          r += '\n              ';
+        }
+        r += "'OpenCLDeviceIndex': '" + d.general.device + "'";
+      }
+      r += "}\n"
+
     }
 
     r += "simulation = Simulation(" + (opt.pdb ? "pdb" : "prmtop") + ".topology, system, integrator, platform";

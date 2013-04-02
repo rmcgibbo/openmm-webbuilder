@@ -49,7 +49,7 @@ General = Backbone.Model.extend({
                   help: '.prmtop file, specifiying the system topology. This\
                          is only required if the coordinate file is in the \
                          AMBER .inpcrd format',
-                  validators: ['prmtop']},
+                  validators: ['prmtop', 'required']},
     protein:   {type: 'Select', title: 'Protein forcefield',
                 options: ['amber03.xml', 'amber03_gbvi.xml',
                           'amber03_obc.xml', 'amber10.xml',
