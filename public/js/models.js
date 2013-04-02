@@ -112,12 +112,12 @@ General = Backbone.Model.extend({
       return !(attrs.coords_fn.match(/\.inpcrd$/) && attrs.topology_fn.match(/\.prmtop$/))
     },
     water: function(attrs) {
-      if (attrs.protein.match(/_obc|_gbvi/) == null) {
-        return false;
+      if (!attrs.protein.match(/_obc|_gbvi/)) {
+        return true;
       } else if (attrs.coords_fn.match(/\.inpcrd$/) && attrs.topology_fn.match(/\.prmtop$/)) {
         return false;
       }
-      return true;
+      return false;
     },
     precision: function(attrs) {
       return _.contains(['CUDA', 'OpenCL'], attrs.platform);
@@ -154,10 +154,20 @@ System = Backbone.Model.extend({
                 title: 'Nonbonded method',
                 help: 'Method for dealing with long range non-bondend \
                        interactions. Refer to the user guide for a detailed discussion.'},
+    ewald_error_tolerance: {type: 'Text', title: 'Ewald error tolerance',
+                            validators: ['pos_float', 'required'],
+                            help: "The error tolerance is roughly equal to the \
+                                   fractional error in the forces due to \
+                                   truncating theEwald summation."},
     constraints: {type: 'Select', title: 'Constraints',
                   options: ['None', 'HBonds', 'HAngles', 'AllBonds'],
                   help: 'Applying constraints to some of the atoms can \
                          enable you to take longer timesteps.'},
+    constraint_error_tol: {type: 'Text', title: 'Constraint error tol.', 
+                           validators: ['required', 'pos_float'],
+                           help: 'Tolerance within which constraints are \
+                                  maintained, as a fraction of the constrained \
+                                  distance.'},
     rigid_water: {type: 'Select', options: ['True', 'False'],
                   title: 'Rigid water?',
                   help: 'Be aware that flexible water may require you to \
@@ -184,16 +194,24 @@ System = Backbone.Model.extend({
     },
     gentemp: function(attrs) {
       return attrs.random_initial_velocities == 'True';
-    }
+    },
+    ewald_error_tolerance : function(attrs) {
+      return _.contains(['PME', 'Ewald'], attrs.nb_method);
+    },
+    constraint_error_tol: function(attrs) {
+      return attrs.constraints != 'None';
+    },
   },
 
   defaults: {
     nb_method: 'PME',
-    constraints: 'HAngles',
+    constraints: 'HBonds',
     rigid_water: 'True',
     nb_cutoff: '1.0 nm',
     rnd_init: 'True',
     gentemp: '300 K',
+    ewald_error_tolerance: 0.0005,
+    constraint_error_tol: 0.0001,
   },
 });
 
@@ -236,7 +254,7 @@ Integrator = Backbone.Model.extend({
   defaults: {
     kind: 'Langevin',
     timestep: '2.0 fs',
-    tolerance: '0.001',
+    tolerance: '0.0001',
     friction: '91.0/ps',
     temperature: '300 K',
     barostat: 'None',
@@ -313,6 +331,15 @@ Simulation = Backbone.Model.extend({
                      validators: ['pos_integer', 'required'],
                      help: 'Frequency, in steps, to print the StateData \
                             statistics to stdout'},
+    statedata_file: {type: 'Text', title: 'StateData filename',
+                     help: 'Filename to which to save the output of the \
+                            StateDataReporter. If left blank, the output will \
+                            be printed to stdout.'},
+    statedata_opts: {type: 'Checkboxes', title: 'StateData options',
+                     options: ['Step', 'Time', 'Potential energy', 'Kinetic energy',
+                               'Temperature', 'Volume', 'Density'],
+                     help: "Select the observables that you'd like the \
+                            StateDataReporter to report"},
   },
 
   defaults: {
@@ -325,6 +352,8 @@ Simulation = Backbone.Model.extend({
     dcd_file: 'output.dcd',
     statedata_reporter: 'True',
     statedata_freq: 100,
+    statedata_file: '',
+    statedata_opts: ['Step', 'Potential energy', 'Temperature'],
   },
 
   visibility: {
@@ -338,6 +367,12 @@ Simulation = Backbone.Model.extend({
       return attrs.dcd_reporter == 'True';
     },
     statedata_freq: function(attrs) {
+      return attrs.statedata_reporter == 'True';
+    },
+    statedata_file: function(attrs) {
+      return attrs.statedata_reporter == 'True';
+    },
+    statedata_opts: function(attrs) {
       return attrs.statedata_reporter == 'True';
     },
   },

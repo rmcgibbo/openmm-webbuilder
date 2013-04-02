@@ -5,6 +5,28 @@ html, body {
   height: 100%;
 }
 
+.bbf-checkboxes label {
+  float: left;
+  padding-left: 1em;
+  white-space: nowrap;
+}
+.bbf-checkboxes input {
+  float: left;
+}
+ul.bbf-checkboxes {
+  width: 150px;
+  margin-left: 10px;
+  float: left;
+}
+
+label.control-label {
+  float: left;
+}
+
+.bbf-checkboxes li {
+  list-style-type: none;
+  clear: both;
+}
 
 /* make sure that the input forms dont go any wider
    than their box*/

@@ -58,7 +58,7 @@ Backbone.Form.validators['pos_float'] = function(options) {
       type: 'float',
       message: 'float required',
     };
-    if (! value.match(/^$|^\s*\d+(\.\d+)?\s*/)) return err;
+    if (! value.match(/^$|^\s*\d+(\.\d+)?\s*$/)) return err;
 }};
 
 Backbone.Form.validators['prmtop'] = function(options) {

@@ -54,9 +54,8 @@ var OpenMMScriptView = Backbone.View.extend({
     r += 'from simtk.openmm.app import *\n';
     r += 'from simtk.openmm import *\n';
     r += 'from simtk.unit import *\n';
-    r += 'from sys import stdout\n';
-    if (d.system.random_initial_velocities == 'True') {
-      r += 'import numpy as np\n';
+    if (d.simulation.statedata_file.length == 0) {
+      r += 'from sys import stdout\n';
     }
 
 
@@ -82,6 +81,9 @@ var OpenMMScriptView = Backbone.View.extend({
     }
     r += ' constraints=' + d.system.constraints;
     r += ', rigidWater=' + d.system.rigid_water;
+    if (_.contains(['Ewald', 'PME'], d.system.nb_method)) {
+      r += ',\n    ewaldErrorTolerance=' + d.system.ewald_error_tolerance;
+    }
     r += ')\n';
 
 
@@ -95,11 +97,14 @@ var OpenMMScriptView = Backbone.View.extend({
     } else {
       r += replace_unit(d.integrator.timestep) + ')\n';
     }
+    if (d.system.constraints != 'None' && d.system.constraint_error_tol.length > 0) {
+      r += "integrator.setConstraintTolerance(" + d.system.constraint_error_tol + ")\n";
+    } 
 
 
     if (d.integrator.barostat == 'Monte Carlo') {
       r += "system.addForce(MonteCarloBarostat(" + replace_unit(d.integrator.pressure);
-      r += ', ' + d.integrator.temperature;
+      r += ', ' + replace_unit(d.integrator.temperature);
       if (d.integrator.barostat_step.length > 0) {
         r += ', ' +  d.integrator.barostat_step;
       }
@@ -162,16 +167,7 @@ var OpenMMScriptView = Backbone.View.extend({
 
 
     if (d.system.random_initial_velocities == 'True') {
-      r += "\n# Generate random initial velocities from Maxwell-Boltzmann distribution.\n"
-      r += 'velocities = Quantity(np.zeros([system.getNumParticles(), 3], np.float32),\n'
-      r += '                      nanometers / picosecond)\n'
-      r += 'kT = BOLTZMANN_CONSTANT_kB * AVOGADRO_CONSTANT_NA * ' + replace_unit(d.system.gentemp) + '\n'
-      r += 'for atom_index in range(natoms):\n'
-      r += '    atom_mass = system.getParticleMass(atom_index)\n'
-      r += '    # standard deviation of velocity distribution for each coord for this atom\n'
-      r += '    sigma = sqrt(kT / atom_mass)\n'
-      r += '    velocities[atom_index, :] = sigma * np.random.normal(size=3)\n'
-      r += 'system.context.setVelocities(velocities)\n\n'
+      r += '\nsystem.context.setVelocitiesToTemperature(' + replace_unit(d.system.gentemp) + ')\n';
     }
 
     if (d.simulation.equil_steps > 0) {
@@ -183,8 +179,13 @@ var OpenMMScriptView = Backbone.View.extend({
       r += "simulation.reporters.append(DCDReporter('" + d.simulation.dcd_file + "'";
       r += ', ' + d.simulation.dcd_freq + "))\n"
     } if (d.simulation.statedata_reporter == 'True') {
-      r += "simulation.reporters.append(StateDataReporter(stdout, " + d.simulation.statedata_freq
-      r += ', step=True,\n    potentialEnergy=True, temperature=True))\n'
+      r += "simulation.reporters.append(StateDataReporter("
+      if (d.simulation.statedata_file.length == 0) {
+        r += 'stdout';
+      } else {
+        r += "'" + d.simulation.statedata_file + "'"
+      }  
+      r += ", " + d.simulation.statedata_freq + ', step=True,\n    potentialEnergy=True, temperature=True))\n'
     } if (d.simulation.dcd_reporter == 'True' || d.simulation.statedata_reporter == 'True') {
       r += '\n';
     }
