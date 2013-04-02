@@ -72,6 +72,10 @@ var Gist = function(el) {
 
   this.update_gist = function () {
     // update the gist on github
+    if (this.get_id() == undefined) {
+      bootbox.alert('Error updating Gist.');
+    }
+    
     var url = this.base_url + '/' + this.get_id() + '?access_token=' + this.get_token();
 
     self = this;

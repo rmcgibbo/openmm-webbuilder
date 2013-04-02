@@ -3,6 +3,11 @@
 <script>
 // Step 3
 var code = window.location.toString().replace(/.+code=/, '');
-window.opener.postMessage(code, window.location);
-window.close();
+if (window.opener != null) {
+  window.opener.postMessage(code, window.location);
+  window.close();
+} else if (parent.window.opener != null) {
+  parent.window.opener.postMessage(code, window.location);
+  window.close();
+}
 </script>
