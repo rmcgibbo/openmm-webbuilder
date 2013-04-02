@@ -125,14 +125,10 @@ $(function () {
   $('#save-script-gist').click(function () {
     if (gist.get_token() == undefined) {
       //Step 2
-      if (window.location.origin != 'http://openmm.herokuapp.com') {
-        bootbox.alert('Sorry, this only works deployed on openmm.herokuapp.com')
-      } else {
-        var uri = 'https://github.com/login/oauth/authorize' +
-            '?client_id=a6a4c15c8e5250bea5c1&scope=gist';
-        window.open(uri);
-        return;
-      }
+      var uri = 'https://github.com/login/oauth/authorize' +
+          '?client_id=a6a4c15c8e5250bea5c1&scope=gist';
+      window.open(uri);
+      return;
     }
 
     if (gist.get_id()) {
