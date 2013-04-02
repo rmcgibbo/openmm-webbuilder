@@ -210,7 +210,7 @@ Integrator = Backbone.Model.extend({
     timestep: {type: 'Text', validators: ['time'], title: 'Timestep',
                help: 'Step size for the integrator.'},
     tolerance: {type: 'Text', title: 'Error tolerance',
-                validators: ['pos_float'],
+                validators: ['pos_float', 'required'],
                 help: 'It is best not to think of this value as having any \
                        absolute meaning. Just think of it as an adjustable \
                        parameter that affects the step size and integration \
