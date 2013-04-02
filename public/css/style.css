@@ -34,6 +34,10 @@ a.sidebar-label {
   text-decoration: none;
 }
 
+.help-inline {
+  white-space: nowrap;
+}
+
 
 
 /* sticky footer */

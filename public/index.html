@@ -23,13 +23,7 @@
     <link href="//cdnjs.cloudflare.com/ajax/libs/prettify/r224/prettify.css" type="text/css">
     <script src="//google-code-prettify.googlecode.com/svn/loader/run_prettify.js?autorun=false"></script>
 
-    <!-- Mustache templates -->
-    <script src="//cdnjs.cloudflare.com/ajax/libs/mustache.js/0.7.2/mustache.min.js"></script>
-    <script src="//embeddedjavascript.googlecode.com/files/ejs_0.9_alpha_1_production.js"></script>
-    <script src="https://raw.github.com/visionmedia/ejs/master/ejs.min.js"></script>
-
     <!-- my stuff --> 
-    <link href="templates/template.mustache" rel="template" id="template-mustache"/>
     <link href="css/style.css" rel="stylesheet">
     
     <!-- Backbone.Forms extension-->
@@ -45,6 +39,7 @@
     <script src="js/lib.min.js"></script>
     
     <!-- but keep this app stuff unmified, for easier development -->
+    <script src="js/validators.js"></script>
     <script src="js/models.js"></script>
     <script src="js/views.js"></script>
     <script src="js/gist.js"></script>
@@ -61,7 +56,7 @@
 <div class="navbar navbar-top">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="#">OpenMM-Builder</a>
+      <a class="brand" href="#">OpenMM Script Builder</a>
       <div class="nav-collapse collapse">
         <ul class="nav">
           <!-- <li><a href='#'>Home</a></li> -->
@@ -78,6 +73,7 @@
               <button type="button" id="save-script-local" class="btn">Save Script</button>
             </form>
           </li>
+          <!-- the save to gist button is added dynamically within gist.js -->
           <!-- <li><button type="button" id="save-script-gist" class="btn">Save to Gist</button></li> -->
         </ul>
         

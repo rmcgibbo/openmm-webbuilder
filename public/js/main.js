@@ -1,6 +1,6 @@
 $(function () {
   Backbone.Form.editors.List.Modal.ModalAdapter = Backbone.BootstrapModal;
-  Backbone.Form.helpers.keyToTitle = function (key) {return key};
+  //Backbone.Form.helpers.keyToTitle = function (key) {return key};
 
   var ModelsClasses = [General, System, Integrator, Simulation];
   var collection = new Collection([]);
@@ -97,9 +97,10 @@ $(function () {
     }
   
     // need to escape out some html entities
-    var rawcode = $('<div />').html($('#code').data('rawcode')).text();
+    var rawcode = $('#code').text();
     var b64code = Base64.encode(rawcode)
     script_input.attr('type', 'hidden').attr('value', b64code).appendTo(form);
+    
     
     form.submit();
     

@@ -54,12 +54,6 @@ def images(filename):
         abort(404)
     return open(path).read()
 
-@app.route('/templates/<filename>')
-def templates(filename):
-    path = os.path.join('public', 'templates', filename)
-    if not os.path.exists(path):
-        abort(404)
-    return open(path).read()
 
 ##############################################################################
 # serve /save, which basically ecohos some data as a download

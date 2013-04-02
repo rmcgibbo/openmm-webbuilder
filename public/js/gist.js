@@ -42,7 +42,7 @@ var Gist = function(el) {
   
   this.files = function () {
     // retreive the content from the dom
-    var rawcode =  $('<div />').html($('#code').data('rawcode')).text();
+    var rawcode =  $('#code').text();
     var filename = $('#save-form input[name="filename"]').val();
     if (filename == '') {
       filename = $('#save-form input[name="filename"]').attr('placeholder');
@@ -61,7 +61,7 @@ var Gist = function(el) {
       JSON.stringify({public: true, files: this.files()}),
       function (gist) {
         
-        $('#navbar-gist').prepend('<a id="view-gist" href="' + gist.html_url + '" target="_blank" class="btn btn-success">View</a>');
+        $('#navbar-gist').append('<a id="view-gist" href="' + gist.html_url + '" target="_blank" class="btn btn-success">View</a>');
         $('#save-script-gist').html('Update Gist');
         self.set_id(gist.id);
         // console.log(gist.html_url);
