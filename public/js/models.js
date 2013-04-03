@@ -71,10 +71,11 @@ General = Backbone.Model.extend({
       return !(attrs.coords_fn.match(/\.inpcrd$/) && attrs.topology_fn.match(/\.prmtop$/))
     },
     water: function(attrs) {
+      if (attrs.coords_fn.match(/\.inpcrd$/) && attrs.topology_fn.match(/\.prmtop$/)) {
+          return false;
+      }
       if (!attrs.protein.match(/_obc|_gbvi/)) {
         return true;
-      } else if (attrs.coords_fn.match(/\.inpcrd$/) && attrs.topology_fn.match(/\.prmtop$/)) {
-        return false;
       }
       return false;
     },
