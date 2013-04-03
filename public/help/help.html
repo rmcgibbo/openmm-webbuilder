@@ -1,0 +1,157 @@
+<div id="general-coords_fn-help">
+'OpenMM can take a .pdb, providing both coordinates and topology or an AMBER .inpcrd, specifying just the coordinates (in which case a .prmtop is requred too).
+</div>
+
+<div id="general-topology_fn-help">
+.prmtop file, specifiying the system topology. This is only required if the coordinate file is in the AMBER .inpcrd format',
+</div>
+
+<div id="general-protein-help">
+Forcefield to use for the protein atoms. If you'd like to use implicit solvent, you can select that here as well (obc or gbvi).
+</div>
+
+
+<div id="general-water-help">
+Forcefield to use for water, for explicit solvent calculations. If you're using implicit solvent, that needs to be set in the protein forcefield option.
+</div>
+
+<div id="general-platform-help">
+GPUs are awesome!
+</div>
+
+<div id="general-precision-help">
+This selects what numeric precision to use for calculations. The allowed values are “single”, “mixed”, and “double”. If it is set to “single”, nearly all calculations are done in single precision. This is the fastest option but also the least accurate. If it is set to “mixed”, forces are computed in single precision but integration is done in double precision. This gives much better energy conservation with only a slightly decrease in speed. If it is set to “double”, all calculations are done in double precision. This is the most accurate option, but is usually much slower than the others
+</div>
+
+<div id="general-device-help">
+'When multiple CUDA/OpenCL devices are available on your computer, this is used to select which one to use. The value is the zero-based index of the device to use, in the order they are returned by the CUDA/OpenCL device API. The GPU platforms also supports parallelizing a simulation across multiple GPUs. To do that, set the device index  to a comma separated list of values. For example “0,1” tells it to use both devices 0 and 1, splitting the work  between them.'
+</div>
+
+<div id="general-opencl_plat_index-help">
+When multiple OpenCL implementations are installed on your computer, this is used to select which one to use. The value is the zero-based index of the platform (in the OpenCL sense, not the OpenMM sense) to use, in the order they are returned by the OpenCL platform API. This is useful, for example, in selecting whether to use a GPU or CPU based OpenCL implementation.
+</div>
+
+<!-- ******************************************************************* -->
+<!-- ******************************************************************* -->
+
+<div id="system-nb_method-help">
+Method for dealing with long range non-bondend interactions. Refer to the user guide for a detailed discussion.
+</div>
+
+<div id="system-nb_cutoff-help">
+Cutoff for long-range non-bonded interactions. This option is important for all non-bonded methods except for "NoCutoff"
+</div>
+
+<div id="system-ewald_error_tolerance-help">
+The error tolerance is roughly equal to the fractional error in the forces due to truncating the Ewald summation.
+</div>
+
+<div id="system-constraints-help">
+Applying constraints to some of the atoms can enable you to take longer timesteps.
+</div>
+
+<div id="system-constraint_error_tol-help">
+Tolerance within which constraints are maintained, as a fraction of the constrained distance.
+</div>
+
+<div id="system-rigid_water-help">
+Be aware that flexible water may require you to further reduce the integration step size, typically to about 0.5 fs.
+</div>
+
+<div id="system-random_initial_velocities-help">
+Initialize the system with random initial velocities, drawn from the Maxwell Boltzmann distribution
+</div>
+
+<div id="system-gentemp-help">
+Specify temperature for generating initial velocities
+</div>
+
+
+<!-- ******************************************************************* -->
+<!-- ******************************************************************* -->
+
+<div id="integrator-kind-help">
+OpenMM offers a choice of several different integration methods. Refer to the user guide for details.
+</div>
+
+<div id="integrator-timestep-help">
+Timestep for the integrator.
+</div>
+
+<div id="integrator-tolerance-help">
+It is best not to think of this value as having any absolute meaning.Just think of it as an adjustable parameter that affects the step size and integration accuracy. Smaller values will produce a smaller average step size. You should try different values to find the largest one that produces a trajectory sufficiently accurate for your purposes.
+</div>
+
+<div id="integrator-friction-help">
+Friction coefficient, for use with stochastic integrators or the Anderson thermostat.
+</div>
+
+<div id="integrator-temperature-help">
+Temperature of the heat bath, used either by a stochastic integrator or the Andersen thermostat to establish and maintain a constant temperature ensemble.
+</div>
+
+<div id="integrator-barostat-help">
+Activate a barostat for pressure coupling. The Monte Carlo barostat uses a Monte Carlo algorithm to adjust the size of the periodic box, simulating the effect of constant pressure. The MC barostat assumes the simulation is also being run at constant temperature, and requires you to specify the system temperature (since it affects the acceptance probability for Monte Carlo moves). It does not actually perform temperature regulation, however. You must use another mechanism along with it to maintain the temperature.
+</div>
+
+<div id="integrator-pressure-help">
+Pressure target, used by a barostat.
+</div>
+
+<div id="integrator-barostat_step-help">
+The frequency (in time steps) at which Monte Carlo pressure changes should be attempted.
+</div>
+
+<div id="integrator-thermostat-help">
+Activate a thermostat to maintain a constant temperature simulation.
+</div>
+
+
+<!-- ******************************************************************* -->
+<!-- ******************************************************************* -->
+
+<div id="simulation-equil_steps-help">
+Number of steps of equilibration to run, prior to attaching reporters 
+and running production.
+</div>
+
+<div id="simulation-prod_steps-help">
+Number of steps of production simulation to run.
+</div>
+
+<div id="simulation-minimize-help">
+Perform local energy minimization, to find a local potential energy minimum near the starting structure. It is usually needed to do one of these calculations before attempting MD, because the process of solvating your initial solute structure usually introduces some bad contacts that need to be relaxed before you attempt to heat the system.
+</div>
+
+
+<div id="simulation-minimize_iters-help">
+The minimizer will exit once the specified number of iterations is reached, even if the energy has not yet converged. If you do not specify this parameter, the minimizer will continue until convergence is reached, no matter how many iterations it takes.
+</div>
+
+<div id="simulation-dcd_reporter-help">
+DCDReporter outputs a series of frames from a Simulation to a DCD file.
+</div>
+
+<div id="simulation-dcd_freq-help">
+Frequency, in steps, to save the state to disk in the DCD format.
+</div>
+
+<div id="simulation-dcd_file-help">
+Filename of the DCD file to which the data shall be saved.
+</div>
+
+<div id="simulation-statedata_reporter-help">
+Attach a StateDataReporter to the simulation to print summary statistics as the simulation is running.
+</div>
+
+<div id="simulation-statedata_freq-help">
+Frequency, in steps, to print summary statistics on the state of the simulation.
+</div>
+
+<div id="simulation-statedata_file-help">
+Filename to which to save the output of the StateDataReporter. If left blank, the output will be printed to stdout.
+</div>
+
+<div id="simulation-statedata_opts-help">
+Select the observables that for the StateDataReporter to report.
+</div>

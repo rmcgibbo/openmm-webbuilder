@@ -31,7 +31,7 @@ def login():
 # Serve static files
 ##############################################################################
 
-@app.route('/js/<filename>')
+@app.route('/js/<path:filename>')
 def js(filename):
     path = os.path.join('public', 'js', filename)
     if not os.path.exists(path):
@@ -50,6 +50,13 @@ def css(filename):
 @app.route('/images/<filename>')
 def images(filename):
     path = os.path.join('public', 'images', filename)
+    if not os.path.exists(path):
+        abort(404)
+    return open(path).read()
+
+@app.route('/help/<filename>')
+def help(filename):
+    path = os.path.join('public', 'help', filename)
     if not os.path.exists(path):
         abort(404)
     return open(path).read()

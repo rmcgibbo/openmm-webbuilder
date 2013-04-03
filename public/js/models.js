@@ -1,3 +1,4 @@
+$(function() {
 /*
     * Expected behavior of the Backone.Model subclasses
     * -------------------------------------------------
@@ -41,14 +42,8 @@ General = Backbone.Model.extend({
   name: 'general',
   schema: {
     coords_fn:   {type: 'Text', title: 'Input coordinates',
-                  help: 'OpenMM can take a .pdb, providing both coordinates\
-                         and topology or an AMBER .inpcrd, specifying just the \
-                         coordinates (in which case a .prmtop is requred too).',
                   validators: ['required', /\.pdb$|\.inpcrd$/]},
     topology_fn: {type: 'Text', title: 'Input topology',
-                  help: '.prmtop file, specifiying the system topology. This\
-                         is only required if the coordinate file is in the \
-                         AMBER .inpcrd format',
                   validators: ['prmtop', 'required']},
     protein:   {type: 'Select', title: 'Protein forcefield',
                 options: ['amber03.xml', 'amber03_gbvi.xml',
@@ -57,54 +52,18 @@ General = Backbone.Model.extend({
                           'amber96.xml', 'amber96_gbvi.xml',
                           'amber96_obc.xml', 'amber99_gbvi.xml',
                           'amber99_obc.xml', 'amber99sb.xml',
-                          'amber99sbildn.xml', 'amber99sbnmr.xml'],
-                help: 'Forcefield to use for the protein atoms. \
-                       If you\'d like to use implicit solvent, you \
-                       can select that here as well (obc or gbvi).'},
+                          'amber99sbildn.xml', 'amber99sbnmr.xml']},
     water:     {type: 'Select', options: ['spce.xml', 'tip3p.xml',
                                           'tip4pew.xml', 'tip5p.xml'],
-                title: 'Water forcefield',
-                help: 'Forcefield to use for water, for explicit solvent \
-                       calculations. If you\'re using implicit solvent, \
-                       that needs to be set in the protein forcefield option.'},
+                title: 'Water forcefield'},
     platform:  {type: 'Select', options: ['Reference', 'OpenCL', 'CUDA'],
-                help: 'GPUs are awesome!', title: 'Platform'},
+                title: 'Platform'},
     precision: {type: 'Select', options: ['single', 'mixed', 'double'],
-                     title: 'Precision',
-                     help: 'This selects what numeric precision to use for \
-                            calculations. Theallowed values are “single”, \
-                            “mixed”, and “double”. If it is set to “single”, \
-                            nearly all calculations are done in single precision.\
-                            This is the fastest option but also the least \
-                            accurate. If it is set to “mixed”, forces are \
-                            computed in single precision but integration is \
-                            done in double precision. This gives much better \
-                            energy conservation with only a slightly decrease \
-                            in speed. If it is set to “double”, all \
-                            calculations are done in double precision. This is \
-                            the most accurate option, but is usually much \
-                            slower than the others'},
+                     title: 'Precision'},
     device: {type: 'Text', title: 'Device index',
-             validators: [/^\d+(,\d+)*$/],
-             help: 'When multiple CUDA/OpenCL devices are available on your \
-                    computer, this is used to select which one to use. \
-                    The value is the zero-based index of the device to use, \
-                    in the order they are returned by the CUDA/OpenCL device API.\
-                    The GPU platforms also supports parallelizing a simulation\
-                    across multiple GPUs. To dothat, set the device index \
-                    to a comma separated list of values. For example “0,1” \
-                    tells it to use both devices 0 and 1, splitting the work \
-                    between them.'},
-      opencl_plat_index: {type: 'Text', title: 'OpenCL platform indx',
-                          validators: ['pos_integer'],
-                          help: 'When multiple OpenCL implementations are \
-                          installed on your computer, this is used to select \
-                          which one to use. The value is the zero-based index \
-                          of the platform (in the OpenCL sense, not the OpenMM \
-                          sense) to use, in the order they are returned by the \
-                          OpenCL platform API. This is useful, for example, \
-                          in selecting whether to use a GPU or CPU based \
-                          penCL implementation.'},
+             validators: [/^\d+(,\d+)*$/]},
+    opencl_plat_index: {type: 'Text', title: 'OpenCL platform indx',
+                        validators: ['pos_integer']},
   },
 
   visibility: {
@@ -151,40 +110,20 @@ System = Backbone.Model.extend({
   schema: {
     nb_method: {type: 'Select', options: ['NoCutoff', 'CutoffNonPeriodic',
                                           'CutoffPeriodic', 'Ewald', 'PME'],
-                title: 'Nonbonded method',
-                help: 'Method for dealing with long range non-bondend \
-                       interactions. Refer to the user guide for a detailed discussion.'},
+                title: 'Nonbonded method'},
     ewald_error_tolerance: {type: 'Text', title: 'Ewald error tolerance',
-                            validators: ['pos_float', 'required'],
-                            help: "The error tolerance is roughly equal to the \
-                                   fractional error in the forces due to \
-                                   truncating theEwald summation."},
+                            validators: ['pos_float', 'required']},
     constraints: {type: 'Select', title: 'Constraints',
-                  options: ['None', 'HBonds', 'HAngles', 'AllBonds'],
-                  help: 'Applying constraints to some of the atoms can \
-                         enable you to take longer timesteps.'},
+                  options: ['None', 'HBonds', 'HAngles', 'AllBonds']},
     constraint_error_tol: {type: 'Text', title: 'Constraint error tol.', 
-                           validators: ['required', 'pos_float'],
-                           help: 'Tolerance within which constraints are \
-                                  maintained, as a fraction of the constrained \
-                                  distance.'},
+                           validators: ['required', 'pos_float']},
     rigid_water: {type: 'Select', options: ['True', 'False'],
-                  title: 'Rigid water?',
-                  help: 'Be aware that flexible water may require you to \
-                         further reduce the integration step size, typically \
-                         to about 0.5 fs.'},
+                  title: 'Rigid water?'},
     nb_cutoff:   {type: 'Text', title: 'Nonbonded cutoff',
-                  validators: ['distance'],
-                  help: 'Cutoff for long-range non-bonded interactions. \
-                         This option is important for all non-bonded methods \
-                         except for "NoCutoff"'},
-    random_initial_velocities:    {type: 'Select', title: 'Random init vels.',
-                                   options: ['True', 'False'],
-                                   help: 'Initialize the system with random \
-                                          initial velocities, drawn from the \
-                                          Maxwell Boltzmann distribution'},
+                  validators: ['distance']},
+    random_initial_velocities: {type: 'Select', title: 'Random init vels.',
+                                options: ['True', 'False']},
     gentemp:     {type: 'Text', title: 'Generation temp.',
-                  help: 'Specify temperature for generating initial velocities',
                   validators: ['temperature']}
   },
 
@@ -219,35 +158,17 @@ Integrator = Backbone.Model.extend({
   el: '#sidepane-integrator',
   name: 'integrator',
   schema: {
-    kind: {type: 'Select',
-           options: ['Langevin', 'VariableLangevin', 'Brownian',
-                     'Verlet', 'VariableVerlet'],
-           title: 'Integrator',
-           help: 'OpenMM offers a choice of several different integration \
-                  methods. Refer to the user guide for details.'},
-    timestep: {type: 'Text', validators: ['time'], title: 'Timestep',
-               help: 'Step size for the integrator.'},
+    kind: {type: 'Select', title: 'Integrator',
+           options: ['Langevin', 'VariableLangevin', 'Brownian', 'Verlet', 'VariableVerlet']},
+    timestep: {type: 'Text', validators: ['time'], title: 'Timestep'},
     tolerance: {type: 'Text', title: 'Error tolerance',
-                validators: ['pos_float', 'required'],
-                help: 'It is best not to think of this value as having any \
-                       absolute meaning. Just think of it as an adjustable \
-                       parameter that affects the step size and integration \
-                       accuracy. Smaller values will produce a smaller average \
-                       step size. You should try different values to find the \
-                       largest one that produces a trajectory sufficiently \
-                       accurate for your purposes.'},
-    friction: {type: 'Text', validators: ['friction'], title: 'collision rate',
-               help: 'Friction coefficient, for use with stochastic \
-                      integrators or the Anderson thermostat'},
-    temperature: {type: 'Text', validators: ['temperature'],
-                  help: 'For use with stochastic integrators.'},
-    barostat: {type: 'Select', options: ['None', 'Monte Carlo'],
-               help: 'Activate pressure coupling (NPT)'},
-    pressure: {type: 'Text', help: 'Pressure target to use for pressure coupling',
-               validators: ['pressure']},
+                validators: ['pos_float', 'required']},
+    friction: {type: 'Text', validators: ['friction'], title: 'collision rate'},
+    temperature: {type: 'Text', validators: ['temperature']},
+    barostat: {type: 'Select', options: ['None', 'Monte Carlo']},
+    pressure: {type: 'Text', validators: ['pressure']},
     barostat_step: {type: 'Text', title: 'Barostat interval',
-                    validators: ['pos_integer'],
-                    help:'Step interval for MC barostat volume adjustments.'},
+                    validators: ['pos_integer']},
     thermostat: {type: 'Select', options: ['None', 'Andersen']},
   },
 
@@ -296,50 +217,19 @@ Simulation = Backbone.Model.extend({
   el: '#sidepane-simulation',
   name: 'simulation',
   schema: {
-    equil_steps: {type: 'Text', title: 'Equilibration steps',
-                  validators: ['pos_integer'],
-                  help: 'Number of steps for equilibration'},
-    prod_steps: {type: 'Text', title: 'Production steps',
-                 validators: ['pos_integer', 'required'],
-                 help: 'Number of steps to take in the simulation, in production.'},
-    minimize: {type: 'Select', options: ['True', 'False'],
-               title: 'Minimize?',
-               help: 'Should we run energy minimization first?'},
-    minimize_iters: {type: 'Text', title: 'Max minimize steps',
-                     validators: ['pos_integer'],
-                     help: 'The minimizer will exit once the specified number \
-                            of iterations is reached, even if the energy has \
-                            not yet converged. If you do not specify this \
-                            parameter, the minimizer will continue until \
-                            convergence is reached, no matter how many \
-                            iterations it takes.'},
-    dcd_reporter: {type: 'Select', options: ['True', 'False'],
-                   title: 'DCD reporter?',
-                   help: 'Attach a DCD Reporter, to save the trajectory'},
-    dcd_freq: {type: 'Text', title: 'DCD freq [steps]',
-               validators: ['pos_integer', 'required'],
-               help: 'Freqnency, in steps, with which to save the positions \
-                      to the DCD file'},
-    dcd_file: {type: 'Text', title: 'DCD filename',
-               help: 'Filename for the DCD trajectory file'},
-    statedata_reporter: {type: 'Select', options: ['True', 'False'],
-                         title: 'StateData reporter?',
-                         help: 'Attach a StateDataReporter to the simulation, \
-                                to print some statistics to stdout as the \
-                                simulation is running'},
-    statedata_freq: {type: 'Text', title: 'StateData freq [steps]',
-                     validators: ['pos_integer', 'required'],
-                     help: 'Frequency, in steps, to print the StateData \
-                            statistics to stdout'},
-    statedata_file: {type: 'Text', title: 'StateData filename',
-                     help: 'Filename to which to save the output of the \
-                            StateDataReporter. If left blank, the output will \
-                            be printed to stdout.'},
+    equil_steps: {type: 'Text', title: 'Equilibration steps', validators: ['pos_integer']},
+    prod_steps: {type: 'Text', title: 'Production steps', validators: ['pos_integer', 'required']},
+    minimize: {type: 'Select', options: ['True', 'False'], title: 'Minimize?'},
+    minimize_iters: {type: 'Text', title: 'Max minimize steps', validators: ['pos_integer']},
+    dcd_reporter: {type: 'Select', options: ['True', 'False'], title: 'DCD reporter?'},
+    dcd_freq: {type: 'Text', title: 'DCD freq [steps]', validators: ['pos_integer', 'required']},
+    dcd_file: {type: 'Text', title: 'DCD filename'},
+    statedata_reporter: {type: 'Select', options: ['True', 'False'], title: 'StateData reporter?'},
+    statedata_freq: {type: 'Text', title: 'StateData freq [steps]', validators: ['pos_integer', 'required']},
+    statedata_file: {type: 'Text', title: 'StateData filename'},
     statedata_opts: {type: 'Checkboxes', title: 'StateData options',
-                     options: ['Step', 'Time', 'Potential energy', 'Kinetic energy',
-                               'Temperature', 'Volume', 'Density'],
-                     help: "Select the observables that you'd like the \
-                            StateDataReporter to report"},
+                     options: ['Step index', 'Time', 'Potential energy', 'Kinetic energy',
+                               'Total energy', 'Temperature', 'Volume', 'Density']},
   },
 
   defaults: {
@@ -376,4 +266,7 @@ Simulation = Backbone.Model.extend({
       return attrs.statedata_reporter == 'True';
     },
   },
+});
+
+
 });

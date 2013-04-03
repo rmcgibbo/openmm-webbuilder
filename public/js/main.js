@@ -1,4 +1,11 @@
 $(function () {
+  // pull down the helptext for each of the options.
+  $.ajax('help/help.html', {
+        dataType: 'html', async: false, success: function (data) {
+          $(data).hide().appendTo($('body'));
+        }
+  });
+  
   Backbone.Form.editors.List.Modal.ModalAdapter = Backbone.BootstrapModal;
   //Backbone.Form.helpers.keyToTitle = function (key) {return key};
 
@@ -50,8 +57,9 @@ $(function () {
           $(label).html('');
           label.append('<a class="sidebar-label" href="#">' + name +'</a>');
 
-          if ('help' in options) {
-            label.popover({content: options.help,
+          var $help_el = $('#' + model.name + '-' + key + '-help')
+          if ($help_el.length > 0) {
+            label.popover({content: $help_el.html(),
                            placement: 'bottom',
                            delay: { show: 300, hide: 100 },
                            trigger: 'hover'});
