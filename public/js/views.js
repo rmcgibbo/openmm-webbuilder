@@ -177,7 +177,7 @@ var OpenMMScriptView = Backbone.View.extend({
       }
     }
     if (d.system.random_initial_velocities == 'True') {
-      r += '\nsystem.context.setVelocitiesToTemperature(' + replace_unit(d.system.gentemp) + ')\n';
+      r += '\nsimulation.context.setVelocitiesToTemperature(' + replace_unit(d.system.gentemp) + ')\n';
     }
 
     // equilibrate
