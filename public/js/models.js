@@ -244,7 +244,7 @@ Simulation = Backbone.Model.extend({
     statedata_reporter: 'True',
     statedata_freq: 100,
     statedata_file: '',
-    statedata_opts: ['Step', 'Potential energy', 'Temperature'],
+    statedata_opts: ['Step index', 'Potential energy', 'Temperature'],
   },
 
   visibility: {
