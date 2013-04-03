@@ -3,11 +3,11 @@
 </div>
 
 <div id="general-topology_fn-help">
-.prmtop file, specifiying the system topology. This is only required if the coordinate file is in the AMBER .inpcrd format',
+.prmtop file, specifiying the system topology. This is only required if the coordinate file is in the AMBER .inpcrd format.
 </div>
 
 <div id="general-protein-help">
-Forcefield to use for the protein atoms. If you'd like to use implicit solvent, you can select that here as well (obc or gbvi).
+Forcefield to use for the protein atoms. If you'd like to use implicit solvent, you can select that here as well (obc or gbvi). Each of the forcefields is characterized by an accuracy - performance tradeoff. For details, consult the literature.
 </div>
 
 
@@ -16,7 +16,8 @@ Forcefield to use for water, for explicit solvent calculations. If you're using 
 </div>
 
 <div id="general-platform-help">
-GPUs are awesome!
+OpenMM runs simulations on three platforms: Reference, CUDA, and OpenCL. The CUDA platform is implemented using the CUDA language, and performs calculations on Nvidia GPUs. The OpenCL Platform OpenCL language, and performs calculations on a variety of types of GPUs and CPUs. The reference platform
+is designed to serve as reference code for writing other platforms. For details, see section 8.7 of the OpenMM user guide.
 </div>
 
 <div id="general-precision-help">
@@ -24,7 +25,7 @@ This selects what numeric precision to use for calculations. The allowed values 
 </div>
 
 <div id="general-device-help">
-'When multiple CUDA/OpenCL devices are available on your computer, this is used to select which one to use. The value is the zero-based index of the device to use, in the order they are returned by the CUDA/OpenCL device API. The GPU platforms also supports parallelizing a simulation across multiple GPUs. To do that, set the device index  to a comma separated list of values. For example “0,1” tells it to use both devices 0 and 1, splitting the work  between them.'
+When multiple CUDA/OpenCL devices are available on your computer, this is used to select which one to use. The value is the zero-based index of the device to use, in the order they are returned by the CUDA/OpenCL device API. The GPU platforms also supports parallelizing a simulation across multiple GPUs. To do that, set the device index  to a comma separated list of values. For example “0,1” tells it to use both devices 0 and 1, splitting the work  between them.
 </div>
 
 <div id="general-opencl_plat_index-help">
