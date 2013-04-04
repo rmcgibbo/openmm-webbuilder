@@ -45,17 +45,13 @@ General = Backbone.Model.extend({
                   validators: ['required', /\.pdb$|\.inpcrd$/]},
     topology_fn: {type: 'Text', title: 'Input topology',
                   validators: ['prmtop', 'required']},
-    protein:   {type: 'Select', title: 'Protein forcefield',
-                options: ['amber03.xml', 'amber03_gbvi.xml',
-                          'amber03_obc.xml', 'amber10.xml',
-                          'amber10_gbvi.xml', 'amber10_obc.xml',
-                          'amber96.xml', 'amber96_gbvi.xml',
-                          'amber96_obc.xml', 'amber99_gbvi.xml',
-                          'amber99_obc.xml', 'amber99sb.xml',
-                          'amber99sbildn.xml', 'amber99sbnmr.xml']},
-    water:     {type: 'Select', options: ['spce.xml', 'tip3p.xml',
-                                          'tip4pew.xml', 'tip5p.xml'],
-                title: 'Water forcefield'},
+    protein:   {type: 'Select', title: 'Forcefield',
+                options: ['AMBER96', 'AMBER99sb',
+                          'AMBER99sb-ildn', 'AMBER99sb-nmr',
+                          'AMBER03', 'AMBER10']},
+    water:     {type: 'Select', options: ['SPC/E', 'TIP3P',
+                                          'TIP4P-Ew', 'TIP5P', 'Implicit Solvent (OBC)'],
+                title: 'Water Model'},
     platform:  {type: 'Select', options: ['Reference', 'OpenCL', 'CUDA'],
                 title: 'Platform'},
     precision: {type: 'Select', options: ['single', 'mixed', 'double'],
@@ -71,13 +67,10 @@ General = Backbone.Model.extend({
       return !(attrs.coords_fn.match(/\.inpcrd$/) && attrs.topology_fn.match(/\.prmtop$/))
     },
     water: function(attrs) {
-      if (attrs.coords_fn.match(/\.inpcrd$/) && attrs.topology_fn.match(/\.prmtop$/)) {
-          return false;
-      }
-      if (!attrs.protein.match(/_obc|_gbvi/)) {
-        return true;
-      }
-      return false;
+      // if (attrs.coords_fn.match(/\.inpcrd$/) && attrs.topology_fn.match(/\.prmtop$/)) {
+      //     return false;
+      // }
+      return true;
     },
     precision: function(attrs) {
       return _.contains(['CUDA', 'OpenCL'], attrs.platform);
@@ -96,11 +89,11 @@ General = Backbone.Model.extend({
   defaults: {
     coords_fn: 'input.pdb',
     topology_fn: 'input.prmtop',
-    protein: 'amber99sb.xml',
-    water: 'tip3p.xml',
+    protein: 'AMBER99sb-ildn',
+    water: 'TIP3P',
     platform: 'CUDA',
     precision: 'mixed',
-    device: 0,
+    device: '',
     opencl_plat_index: '',
   },
 });
@@ -115,7 +108,7 @@ System = Backbone.Model.extend({
     ewald_error_tolerance: {type: 'Text', title: 'Ewald error tolerance',
                             validators: ['pos_float', 'required']},
     constraints: {type: 'Select', title: 'Constraints',
-                  options: ['None', 'HBonds', 'HAngles', 'AllBonds']},
+                  options: ['None', 'HBonds', 'AllBonds', 'HAngles']},
     constraint_error_tol: {type: 'Text', title: 'Constraint error tol.', 
                            validators: ['required', 'pos_float']},
     rigid_water: {type: 'Select', options: ['True', 'False'],
@@ -151,7 +144,7 @@ System = Backbone.Model.extend({
     rnd_init: 'True',
     gentemp: '300 K',
     ewald_error_tolerance: 0.0005,
-    constraint_error_tol: 0.0001,
+    constraint_error_tol: 0.00001,
   },
 });
 
@@ -160,7 +153,7 @@ Integrator = Backbone.Model.extend({
   name: 'integrator',
   schema: {
     kind: {type: 'Select', title: 'Integrator',
-           options: ['Langevin', 'VariableLangevin', 'Brownian', 'Verlet', 'VariableVerlet']},
+           options: ['Langevin', 'Verlet', 'Brownian', 'VariableLangevin', 'VariableVerlet']},
     timestep: {type: 'Text', validators: ['time'], title: 'Timestep'},
     tolerance: {type: 'Text', title: 'Error tolerance',
                 validators: ['pos_float', 'required']},
@@ -177,7 +170,7 @@ Integrator = Backbone.Model.extend({
     kind: 'Langevin',
     timestep: '2.0 fs',
     tolerance: '0.0001',
-    friction: '91.0/ps',
+    friction: '1.0/ps',
     temperature: '300 K',
     barostat: 'None',
     barostat_step: '25',
@@ -239,10 +232,10 @@ Simulation = Backbone.Model.extend({
     minimize: 'True',
     minimize_iters: '',
     dcd_reporter: 'True',
-    dcd_freq: 100,
+    dcd_freq: 1000,
     dcd_file: 'output.dcd',
     statedata_reporter: 'True',
-    statedata_freq: 100,
+    statedata_freq: 1000,
     statedata_file: '',
     statedata_opts: ['Step index', 'Potential energy', 'Temperature'],
   },

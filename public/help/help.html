@@ -25,7 +25,7 @@ This selects what numeric precision to use for calculations. The allowed values 
 </div>
 
 <div id="general-device-help">
-When multiple CUDA/OpenCL devices are available on your computer, this is used to select which one to use. The value is the zero-based index of the device to use, in the order they are returned by the CUDA/OpenCL device API. The GPU platforms also supports parallelizing a simulation across multiple GPUs. To do that, set the device index  to a comma separated list of values. For example “0,1” tells it to use both devices 0 and 1, splitting the work  between them.
+When multiple CUDA/OpenCL devices are available on your computer, this can be used to select which one to use. If no option is selected, OpenMM will choose the fastest device available. The value is the zero-based index of the device to use, in the order they are returned by the CUDA/OpenCL device API. The GPU platforms also supports parallelizing a simulation across multiple GPUs. To do that, set the device index  to a comma separated list of values. For example “0,1” tells it to use both devices 0 and 1, splitting the work  between them.
 </div>
 
 <div id="general-opencl_plat_index-help">

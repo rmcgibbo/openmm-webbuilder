@@ -17,6 +17,45 @@ var replace_unit = function(val) {
   return r;
 }
 
+var protein_xml = function(protein_ff) {
+    var xmls = {
+        AMBER96: 'amber96.xml',
+        AMBER99sb: 'amber99sb.xml',
+        'AMBER99sb-ildn': 'amber99sbildn.xml',
+        'AMBER99sb-nmr': 'amber99sbnmr.xml',
+        AMBER03: 'amber03.xml',
+        AMBER10: 'amber10.xml',
+    };
+    return xmls[protein_ff];
+}
+
+var water_xml = function(protein_ff, water_ff) {
+    var explicit_xmls = {
+        'SPC/E': 'spce.xml',
+        TIP3P: 'tip3p.xml',
+        'TIP4P-Ew': 'tip4pew.xml',
+        TIP5P: 'tip5p.xml',
+    };
+    var implicit_xmls = {
+        AMBER96: 'amber96_obc.xml',
+        AMBER99sb: 'amber99_obc.xml',
+        'AMBER99sb-ildn': 'amber99_obc.xml',
+        'AMBER99sb-nmr': 'amber99_obc.xml',
+        AMBER03: 'amber03_obc.xml',
+        AMBER10: 'amber10_obc.xml',
+    };
+    
+    if (water_ff in explicit_xmls) {
+        return explicit_xmls[water_ff];
+    }
+        
+    if (water_ff == 'Implicit Solvent (OBC)') {
+        return implicit_xmls[protein_ff];
+    }
+    
+    return null;
+}
+
 var OpenMMScriptView = Backbone.View.extend({
   initialize : function() {
     this.collection.bind('change', this.render);
@@ -25,6 +64,22 @@ var OpenMMScriptView = Backbone.View.extend({
     this.models = this.collection.models;
     this.render();
 
+  },
+  
+  sanitycheck: function() {
+    var d = {}
+    for (var i=0; i < that.models.length; i++) {
+      var name = that.models[i].name;
+      d[name] = that.models[i].toJSON();
+    }
+    
+    if (_.contains(['Langevin', 'Verlet'], d.integrator.kind) && d.system.constraints == 'None') {
+        if (d.integrator.timestep > 1) {
+            //pass
+        }
+    }
+//    return null;
+    //if (integrator is langevin or  verlet) and ((constraints is None and dt>1 fs) or (constraints is HBonds or AllBonds and dt>2 fs) or (constraints is HAngles and dt>4 fs)
   },
 
   render: function() {
@@ -39,7 +94,6 @@ var OpenMMScriptView = Backbone.View.extend({
     opt = {
       pdb: d.general.coords_fn.match(/\.pdb$/) != null,
       amber: d.general.coords_fn.match(/\.inpcrd$/) != null,
-      ex_water: d.general.protein.match(/_obc|_gbvi/) == null,
       nb_cutoff: d.system.nb_method != 'NoCutoff',
       cuda: d.general.platform == 'CUDA',
       open_cl: d.general.platform == 'OpenCL',
@@ -68,16 +122,17 @@ var OpenMMScriptView = Backbone.View.extend({
     // these lines end with the start of the function something.createSystem(
     if (opt.pdb) {
       r += "\npdb = PDBFile('" + d.general.coords_fn + "')\n";
-      r += "forcefield = ForceField('" + d.general.protein + "'"
-      if (opt.ex_water) {
-        r += ", '" + d.general.water + "'";
-      }
+      r += "forcefield = ForceField('" + protein_xml(d.general.protein) + "'"
+      r += ", '" + water_xml(d.general.protein, d.general.water) + "'";
       r += ')\n\n';
       r += 'system = forcefield.createSystem(pdb.topology, '
     } else if (opt.amber) {
       r += "\nprmtop = AmberPrmtopFile('" + d.general.topology_fn + "')\n";
       r += "inpcrd = AmberInpcrdFile('" + d.general.coords_fn + "')\n\n";
       r += 'prmtop.createSystem('
+      if (d.general.water == 'Implicit Solvent (OBC)') {
+          r += 'implicitSovlent=OBC2, '
+      }
     } else {
       bootbox.alert('Error!');
     }
