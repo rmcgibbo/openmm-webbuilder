@@ -74,11 +74,22 @@ var OpenMMScriptView = Backbone.View.extend({
     }
     
     if (_.contains(['Langevin', 'Verlet'], d.integrator.kind) && d.system.constraints == 'None') {
-        if (d.integrator.timestep > 1) {
-            //pass
-        }
+        //if (d.integrator.timestep > 1) {
+        //pass
+        //}
+        //return 'Are you sure you want to do that?'
+    } else if (_.contains(['CUDA', 'OpenCL'], d.general.platform) && _.contains(['single', 'mixed'], d.general.precision) && d.system.nb_method == 'PME' && d.system.ewald_error_tolerance < 5e-5) {
+        return 'In single or mixed precision, very low Ewald error tolerance (<5e-5) with PME \
+                are likely to make the error bigger, not smaller, due to numerical issues. You \
+                might want to switch to double precision.';
+    } else if (d.general.water == 'Implicit Solvent (OBC)' && _.contains(['CutoffPeriodic', 'Ewald', 'PME'], d.system.nb_method)) {
+        return 'I see that you\'re using implicit solvent with periodic boundary conditions.\
+               That is a very strange choice, and might result in meaningless results. You \
+               might instead use CutoffNonPeriodic, or NoCutoff to handle nonbonded interactions.';
     }
-//    return null;
+    
+
+    return null;
     //if (integrator is langevin or  verlet) and ((constraints is None and dt>1 fs) or (constraints is HBonds or AllBonds and dt>2 fs) or (constraints is HAngles and dt>4 fs)
   },
 

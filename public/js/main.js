@@ -1,3 +1,6 @@
+var myview;
+
+
 $(function () {
   // pull down the helptext for each of the options.
   $.ajax('help/help.html', {
@@ -72,7 +75,7 @@ $(function () {
   }
 
   // instantiate a view on the collection of models
-  var myview = new OpenMMScriptView({
+  myview = new OpenMMScriptView({
     collection: collection,
   });
 
@@ -110,8 +113,16 @@ $(function () {
     var b64code = Base64.encode(rawcode)
     script_input.attr('type', 'hidden').attr('value', b64code).appendTo(form);
 
-
-    form.submit();
+    error = myview.sanitycheck();
+    if (error) {
+        bootbox.confirm(error + "<br/><br/> Are you sure you want to do save this script?", function(result) {
+            if (result) {
+                form.submit();
+            }
+        }); 
+    } else {
+        form.submit();
+    }
 
     // reset it, if we messed w/ the form
     if (set_value_from_placeholder) {
