@@ -61,7 +61,7 @@ var Gist = function(el) {
       JSON.stringify({public: true, files: this.files()}),
       function (gist) {
 
-        $('#navbar-gist').append('<a id="view-gist" href="' + gist.html_url + '" target="_blank" class="btn btn-success">View</a>');
+        $('#navbar-gist').after('<li id="view-gist" href="' + gist.html_url + '" target="_blank" class="btn">View</li>');
         $('#save-script-gist').html('Update Gist');
         self.set_id(gist.id);
         // console.log(gist.html_url);
@@ -109,10 +109,12 @@ var Gist = function(el) {
 $(function () {
 
   // place a new
-  $('.navbar ul.nav').after(' \
-  <ul id="navbar-gist" class="navbar-form" > \
-    <button id="save-script-gist" type="submit" class="btn">Save Gist</button> \
-  </ul>');
+
+
+  $('.navbar ul.nav').append(' \
+  <li id="navbar-gist" style="padding-left:2em"> \
+    <button id="save-script-gist" class="btn">Save Gist</button> \
+  </li>');
 
   var gist = new Gist();
   // Step 4

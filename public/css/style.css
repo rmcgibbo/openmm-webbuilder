@@ -37,6 +37,10 @@ select {
   max-width: 165px;
 }
 
+.stderr {
+    color: #BA1919; /* dark red */
+}
+
 /* adjust the width of the input forms*/
 .form-horizontal .control-label {
   width: 100px;

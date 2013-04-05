@@ -1,101 +1,190 @@
+##############################################################################
+# Imports
+##############################################################################
+# stdlib
 import os
 import base64
 import urlparse
-from urllib2 import urlopen
+import json
+from threading import Lock
 from urllib import urlencode
+import time
+
+# webserver
+from pymongo import Connection
+import tornado.ioloop
+from tornado.web import (RequestHandler, StaticFileHandler, Application,
+                         asynchronous)
+from tornado.websocket import WebSocketHandler
+from tornado.httpclient import AsyncHTTPClient
+
+# mine
+from validation import validate_openmm
+from executor import with_timeout
+
+##############################################################################
+# Utilities
+##############################################################################
+
+HTTP_CLIENT = AsyncHTTPClient()
 def urldecode(s):
     return dict(urlparse.parse_qsl(s))
 
-from flask import request, Response, Flask, abort
-app = Flask(__name__)
+
+class Session(object):
+    """REALLLY CRAPPY SESSIONS FOR TORNADO VIA MONGODB
+    """
+    collection = Connection().my_database.sessions
+    # mongo db database
+    
+    def __init__(self, request):
+        data = {
+            'ip_address': request.remote_ip,
+            'user_agent':  request.headers.get('User-Agent')
+        }
+        result = self.collection.find_one(data)
+        if result is None:
+            # create new data
+            self.collection.insert(data)
+            self.data = data
+        else:
+            self.data = result
+
+    def get(self, attr, default=None):
+        return self.data.get(attr, default)
+    
+    def put(self, attr, value):
+        self.collection.remove(self.data)
+        self.data[attr] = value
+        self.collection.insert(self.data)
+    
+    def __repr__(self):
+        return str(self.data)
 
 ##############################################################################
-# Serve index.html
+# Handlers
 ##############################################################################
 
-@app.route('/')
-def index():
-    return open('public/index.html').read()
+
+class SaveHandler(RequestHandler):
+    # serves /save: basically ecohos some data as a download
+    def post(self):
+        val = base64.decodestring(self.get_argument('value', default=''))
+        filename = self.get_argument('filename', default='openmm.py')
+
+        self.set_header('Content-Type', 'mime/type')
+        self.add_header('Content-Description', 'File Transfer')
+        self.add_header('Content-Disposition', 'attachment; filename=%s' % filename)
+        self.write(val)
+
+
+class GithubTokenTrader(RequestHandler):
+    @asynchronous
+    def get(self):
+        # async http request to github to trade the auth code for an auth token
+        HTTP_CLIENT.fetch('https://github.com/login/oauth/access_token',
+            callback=self.finish_get,
+            body=urlencode({
+                'code': self.get_argument('code', default=''),
+                'client_id': 'a6a4c15c8e5250bea5c1',
+                'client_secret': '2613f8a86a4aed1c7f87d25eb31a403ad347467f',
+                'grant_type': 'authorization_code'
+            })
+        )
+
+    def finish_get(self, httpresponse):
+        try:
+            token = urldecode(httpresponse.body).get('access_token', '')
+        except AttributeError:
+            token = ''
+        self.write(token)
+        self.finish()
+
+
+class IndexHandler(StaticFileHandler):
+    def get(self):
+        session = Session(self.request)
+        session.put('indexcounts', session.get('indexcounts', 0) + 1)
+        
+        print session
+        return super(IndexHandler, self).get('index.html')
+
+
+class RunHandler(WebSocketHandler):
+    lock = Lock()
+    
+    # how long should we let clients execute for
+    timeout = 10
+    
+    # how often should we allow execution
+    max_frequency = 10  # seconds
+
+    def valid_frequency(self):
+        session = Session(self.request)
+        last_run = session.get('last_run')
+        if last_run is not None:
+            if (time.time() - last_run) < self.max_frequency:
+                self.write_error("You're being a little too eager, no?")
+                return False
+        session.put('last_run', time.time())
+
+        return True
+    
+    def on_message(self, message):
+        got_lock = self.lock.acquire(0)
+        if not got_lock:
+            self.write_error("Sorry, I'm busy")
+            return
+        
+        if not self.valid_frequency():
+            self.lock.release()
+            return
+        
+        openmm_script = base64.decodestring(message)
+        is_valid, validation_error = validate_openmm(openmm_script)
+
+        if is_valid:
+            timed_out = with_timeout(openmm_script, stdout_cb=self.write_output,
+                                     stderr_cb=self.write_error, timeout=self.timeout)
+            # print 'timed out', timed_out
+            if timed_out:
+                self.write_error('Your script timed out!')
+        else:
+            self.write_error(validation_error)
+            
+        self.lock.release()
+
+
+    def write_output(self, message):
+        # print 'output', message
+        self.write_message(json.dumps({'stdout': message}))
+
+    def write_error(self, message):
+        # print 'error', message
+        self.write_message(json.dumps({'stderr': message}))
 
 
 ##############################################################################
-# Serve a redirect page, from a redirect published by github as the 
-# oath redirect
+# App / Routes
 ##############################################################################
 
-@app.route('/login')
-def login():
-    return open('public/login.html').read()
 
-##############################################################################
-# Serve static files
-##############################################################################
-
-@app.route('/js/<path:filename>')
-def js(filename):
-    path = os.path.join('public', 'js', filename)
-    if not os.path.exists(path):
-        abort(404)
-    return Response(open(path).read(),
-                    mimetype='text/javascript')
-
-@app.route('/css/<filename>')
-def css(filename):
-    path = os.path.join('public', 'css', filename)
-    if not os.path.exists(path):
-        abort(404)
-    return Response(open(path).read(),
-                    mimetype='text/css')
-
-@app.route('/images/<filename>')
-def images(filename):
-    path = os.path.join('public', 'images', filename)
-    if not os.path.exists(path):
-        abort(404)
-    return open(path).read()
-
-@app.route('/help/<filename>')
-def help(filename):
-    path = os.path.join('public', 'help', filename)
-    if not os.path.exists(path):
-        abort(404)
-    return open(path).read()
+application = Application([
+    # dynamic handlers
+    (r'/save', SaveHandler),
+    (r'/token', GithubTokenTrader),
+    (r'/run', RunHandler),
+    # index page
+    (r'/', IndexHandler, {'path': 'public'}),
+    # static files
+    (r'/js/(.*)', StaticFileHandler, {'path': 'public/js'}),
+    (r'/css/(.*)', StaticFileHandler, {'path': 'public/css'}),
+    (r'/help/(.*)', StaticFileHandler, {'path': 'public/help'}),
+    (r'/images/(.*)', StaticFileHandler, {'path': 'public/images'}),
+])
 
 
-##############################################################################
-# serve /save, which basically ecohos some data as a download
-##############################################################################
-
-@app.route('/save', methods=['POST'])
-def save():
-    val = base64.decodestring(request.form.get('value', ''))
-    filename = request.form.get('filename', 'openmm.py')
-
-    response = Response(val, headers={
-        'Content-Type': 'mime/type',
-        'Content-Description': 'File Transfer',
-        'Content-Disposition': 'attachment; filename=%s' % filename
-    })
-    return response
-
-##############################################################################
-# trade the oauth code for the access token
-##############################################################################
-
-@app.route('/token')
-def github_token():
-    # raise Exception(type())
-    res = urlopen('https://github.com/login/oauth/access_token', data=urlencode({
-            'code': request.args.get('code', ''),
-            'client_id': 'a6a4c15c8e5250bea5c1',
-            'client_secret': '2613f8a86a4aed1c7f87d25eb31a403ad347467f',
-            'grant_type': 'authorization_code'
-    })).read()
-    return urldecode(res)['access_token']
-
-
-if __name__ == '__main__':
-    # Bind to PORT if defined, otherwise default to 5000 (like rake)
+if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
-    app.debug = True
-    app.run(host='0.0.0.0', port=port)
+    application.listen(port)
+    tornado.ioloop.IOLoop.instance().start()
