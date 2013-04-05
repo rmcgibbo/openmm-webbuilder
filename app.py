@@ -34,7 +34,7 @@ if 'MONGOHQ_URL' in os.environ:
     CONNECTION = MongoClient(os.environ['MONGOHQ_URL'])
 else:
     CONNECTION = MongoClient()
-print CONNECTION.collection_names()
+print CONNECTION['app14240963']
 
 class Session(object):
     """REALLLY CRAPPY SESSIONS FOR TORNADO VIA MONGODB
