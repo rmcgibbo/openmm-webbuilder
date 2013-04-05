@@ -30,16 +30,19 @@ HTTP_CLIENT = AsyncHTTPClient()
 def urldecode(s):
     return dict(urlparse.parse_qsl(s))
 
-if 'MONGOHQ_URL' in os.environ:
-    CONNECTION = MongoClient(os.environ['MONGOHQ_URL'])
-else:
-    CONNECTION = MongoClient()
-print CONNECTION['app14240963']
+def connect_to_mongo():
+    if 'MONGOHQ_URL' in os.environ:
+        c = MongoClient(os.environ['MONGOHQ_URL'])
+    else:
+        c = MongoClient()
+        return c['app14240963']
+DATABASE = connect_to_mongo()
+
 
 class Session(object):
     """REALLLY CRAPPY SESSIONS FOR TORNADO VIA MONGODB
     """
-    collection = CONNECTION.sessions
+    collection = DATABASE.sessions
     # mongo db database
     
     def __init__(self, request):
