@@ -35,7 +35,7 @@ def connect_to_mongo():
         c = MongoClient(os.environ['MONGOHQ_URL'])
     else:
         c = MongoClient()
-        return c['app14240963']
+        return c.app14240963
 DATABASE = connect_to_mongo()
 
 
