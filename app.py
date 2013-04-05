@@ -19,8 +19,8 @@ from tornado.websocket import WebSocketHandler
 from tornado.httpclient import AsyncHTTPClient
 
 # mine
-from validation import validate_openmm
-from executor import with_timeout
+from lib.validation import validate_openmm
+from lib.executor import with_timeout
 
 ##############################################################################
 # Utilities
