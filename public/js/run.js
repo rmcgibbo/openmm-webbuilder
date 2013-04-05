@@ -18,6 +18,8 @@ $(function() {
               $('.span8').prepend('<div class="row-fluid"><pre id="run-output"></pre></div>');
           }
           $('#run-output').append('<div class="stderr">WARNING: This feature is EXPERIMENTAL<br/></div>');
+          $('#run-output').append('<div class="stderr">ERROR: Heroku doesn\'t support the websocket protocol :(</div>');
+
           
           socket.onopen = function() {
               var data = $('#code').text();
