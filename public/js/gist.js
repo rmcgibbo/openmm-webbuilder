@@ -61,7 +61,7 @@ var Gist = function(el) {
       JSON.stringify({public: true, files: this.files()}),
       function (gist) {
 
-        $('#navbar-gist').after('<li id="view-gist" href="' + gist.html_url + '" target="_blank" class="btn">View</li>');
+        $('#navbar-gist').after('<li id="view-gist" onclick="window.open(\'' +gist.html_url+  '\')"; class="btn btn-success">View</li>');
         $('#save-script-gist').html('Update Gist');
         self.set_id(gist.id);
         // console.log(gist.html_url);
@@ -107,9 +107,6 @@ var Gist = function(el) {
 
 // main method that uses the class
 $(function () {
-
-  // place a new
-
 
   $('.navbar ul.nav').append(' \
   <li id="navbar-gist" style="padding-left:2em"> \
