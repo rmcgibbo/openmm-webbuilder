@@ -34,11 +34,12 @@ if 'MONGOHQ_URL' in os.environ:
     CONNECTION = MongoClient(os.environ['MONGOHQ_URL'])
 else:
     CONNECTION = MongoClient()
+print CONNECTION.collection_names()
 
 class Session(object):
     """REALLLY CRAPPY SESSIONS FOR TORNADO VIA MONGODB
     """
-    collection = CONNECTION.my_database.sessions
+    collection = CONNECTION.sessions
     # mongo db database
     
     def __init__(self, request):
