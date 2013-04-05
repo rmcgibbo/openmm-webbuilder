@@ -11,7 +11,7 @@ from urllib import urlencode
 import time
 
 # webserver
-from pymongo import MongoClient
+from pymongo import Connection
 import tornado.ioloop
 from tornado.web import (RequestHandler, StaticFileHandler, Application,
                          asynchronous)
@@ -32,9 +32,9 @@ def urldecode(s):
 
 def connect_to_mongo():
     if 'MONGOHQ_URL' in os.environ:
-        c = MongoClient(os.environ['MONGOHQ_URL'])
+        c = Connection(os.environ['MONGOHQ_URL'])
     else:
-        c = MongoClient()
+        c = Connection()
         return c.app14240963
 DATABASE = connect_to_mongo()
 
