@@ -35,8 +35,10 @@ def connect_to_mongo():
         c = Connection(os.environ['MONGOHQ_URL'])
     else:
         c = Connection()
-        return c.app14240963
+    return c.app14240963
 DATABASE = connect_to_mongo()
+print DATABASE.collection_names()
+ 
 
 
 class Session(object):
