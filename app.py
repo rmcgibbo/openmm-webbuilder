@@ -11,7 +11,7 @@ from urllib import urlencode
 import time
 
 # webserver
-from pymongo import Connection
+from pymongo import MongoClient
 import tornado.ioloop
 from tornado.web import (RequestHandler, StaticFileHandler, Application,
                          asynchronous)
@@ -30,11 +30,15 @@ HTTP_CLIENT = AsyncHTTPClient()
 def urldecode(s):
     return dict(urlparse.parse_qsl(s))
 
+if 'MONGOHQ_URL' in os.environ:
+    CONNECTION = MongoClient(os.environ['MONGOHQ_URL'])
+else:
+    CONNECTION = MongoClient()
 
 class Session(object):
     """REALLLY CRAPPY SESSIONS FOR TORNADO VIA MONGODB
     """
-    collection = Connection().my_database.sessions
+    collection = CONNECTION.my_database.sessions
     # mongo db database
     
     def __init__(self, request):
@@ -105,8 +109,6 @@ class IndexHandler(StaticFileHandler):
     def get(self):
         session = Session(self.request)
         session.put('indexcounts', session.get('indexcounts', 0) + 1)
-        
-        print session
         return super(IndexHandler, self).get('index.html')
 
 
