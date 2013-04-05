@@ -5,8 +5,15 @@ $(function() {
       
       
       $('#run-btn').click(function() {
-          var host = 'ws://' + window.location.origin.split('//')[1] + '/run';
-          var socket = new WebSocket(host);
+          //var host = 'ws://' + window.location.origin.split('//')[1] + '/run';
+          //var socket = new WebSocket(host);
+          
+          if (window.EventSource == undefined) {
+              bootbox.alert('Sorry, I don\'t work in your browser. Try chrome?');
+              return;
+          }
+          
+          var source = new EventSource('run?message=' + Base64.encode($('#code').text()));
           var results = "";
           // add a place to put the buffer
           var output = $('#run-output');
@@ -17,32 +24,19 @@ $(function() {
               // create the output buffer
               $('.span8').prepend('<div class="row-fluid"><pre id="run-output"></pre></div>');
           }
-          $('#run-output').append('<div class="stderr">WARNING: This feature is EXPERIMENTAL<br/></div>');
-          $('#run-output').append('<div class="stderr">ERROR: Heroku doesn\'t support the websocket protocol :(</div>');
+          $('#run-output').append('<div class="stderr">WARNING: This feature is EXPERIMENTAL -- and not really working yet :)<br/></div>');
 
+          source.addEventListener('stderr', function(e) {
+              var message = JSON.parse(e.data).stderr;
+              var results = '<div class="stderr">' + message + '</div>';
+              $('#run-output').append(results);
+          });
           
-          socket.onopen = function() {
-              var data = $('#code').text();
-              socket.send(Base64.encode(data));
-          };
-          
-          socket.onmessage = function(packet) {
-              var msg = JSON.parse(packet.data);
-              
-              if ('stderr' in msg) { 
-                  var results = '<div class="stderr">' + msg.stderr + '</div>';
-              } else if ('stdout' in msg) {
-                  var results = '<div class="stdout">' + msg.stdout + '</div>';
-              }
-
-              $('#run-output').append(results);              
-              console.log(msg);
-          };
-          
-          socket.onclose = function() {
-              console.log('closed!');
-          };
-          
+          source.addEventListener('stdout', function(e) {
+              var message = JSON.parse(e.data).stdout;
+              var results = '<div class="stdout">' + message + '</div>';
+              $('#run-output').append(results);
+          })
     });
     
     

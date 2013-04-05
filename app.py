@@ -15,7 +15,6 @@ from pymongo import Connection
 import tornado.ioloop
 from tornado.web import (RequestHandler, StaticFileHandler, Application,
                          asynchronous)
-from tornado.websocket import WebSocketHandler
 from tornado.httpclient import AsyncHTTPClient
 
 # mine
@@ -38,7 +37,7 @@ def connect_to_mongo():
     return c.app14240963
 DATABASE = connect_to_mongo()
 print DATABASE.collection_names()
- 
+
 
 
 class Session(object):
@@ -46,7 +45,7 @@ class Session(object):
     """
     collection = DATABASE.sessions
     # mongo db database
-    
+
     def __init__(self, request):
         data = {
             'ip_address': request.remote_ip,
@@ -62,12 +61,12 @@ class Session(object):
 
     def get(self, attr, default=None):
         return self.data.get(attr, default)
-    
+
     def put(self, attr, value):
         self.collection.remove(self.data)
         self.data[attr] = value
         self.collection.insert(self.data)
-    
+
     def __repr__(self):
         return str(self.data)
 
@@ -118,14 +117,18 @@ class IndexHandler(StaticFileHandler):
         return super(IndexHandler, self).get('index.html')
 
 
-class RunHandler(WebSocketHandler):
+class RunHandler(RequestHandler):
     lock = Lock()
-    
+
     # how long should we let clients execute for
     timeout = 10
-    
+
     # how often should we allow execution
     max_frequency = 10  # seconds
+
+    def initialize(self):
+        self.set_header('Content-Type', 'text/event-stream')
+        self.set_header('Cache-Control', 'no-cache')
 
     def valid_frequency(self):
         session = Session(self.request)
@@ -137,17 +140,24 @@ class RunHandler(WebSocketHandler):
         session.put('last_run', time.time())
 
         return True
-    
-    def on_message(self, message):
+
+    @asynchronous
+    def get(self):
+        message = self.get_argument('message')
+        print 'Run', message
+
         got_lock = self.lock.acquire(0)
         if not got_lock:
             self.write_error("Sorry, I'm busy")
+            self.finish()
             return
-        
+
         if not self.valid_frequency():
             self.lock.release()
+            self.finish()
             return
-        
+
+        print 'here',
         openmm_script = base64.decodestring(message)
         is_valid, validation_error = validate_openmm(openmm_script)
 
@@ -159,18 +169,31 @@ class RunHandler(WebSocketHandler):
                 self.write_error('Your script timed out!')
         else:
             self.write_error(validation_error)
-            
+
+        self.finish()
         self.lock.release()
 
 
     def write_output(self, message):
-        # print 'output', message
-        self.write_message(json.dumps({'stdout': message}))
+        print 'output', message
+        self.emit({'stdout': message}, 'stdout')
 
     def write_error(self, message):
-        # print 'error', message
-        self.write_message(json.dumps({'stderr': message}))
+        print 'error', message
+        self.emit({'stderr': message}, 'stderr')
 
+    def emit(self, data, event=None):
+        """Actually emits the data to the waiting JS
+        """
+        response = u''
+        encoded_data = json.dumps(data)
+        if event != None:
+            response += u'event: ' + unicode(event).strip() + u'\n'
+
+        response += u'data: ' + encoded_data.strip() + u'\n\n'
+
+        self.write(response)
+        self.flush()
 
 ##############################################################################
 # App / Routes
