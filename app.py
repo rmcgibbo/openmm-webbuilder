@@ -19,10 +19,6 @@ from tornado.web import (RequestHandler, StaticFileHandler, Application,
 from tornado.websocket import WebSocketHandler
 from tornado.httpclient import AsyncHTTPClient
 
-# mine
-# from lib.validation import validate_openmm
-# from lib.executor import with_timeout
-
 ##############################################################################
 # Utilities
 ##############################################################################
