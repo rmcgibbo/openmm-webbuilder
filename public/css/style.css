@@ -5,6 +5,21 @@ html, body {
   height: 100%;
 }
 
+#drop-outer {
+    padding:10px;
+    border:1px solid #ccc;
+}
+#drop-zone{
+    border:2px dashed #bbb;
+    -moz-border-radius:5px;
+    -webkit-border-radius:5px;
+    border-radius:5px;
+    padding:25px;
+    text-align:center;
+    font: 20pt bold 'Vollkorn';
+    color:#bbb
+}
+
 .bbf-checkboxes label {
   float: left;
   padding-left: 1em;

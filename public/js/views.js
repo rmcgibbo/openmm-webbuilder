@@ -268,7 +268,7 @@ var OpenMMScriptView = Backbone.View.extend({
       if (_.contains(d.simulation.statedata_opts, 'Time')) r += ', time=True'
       if (_.contains(d.simulation.statedata_opts, 'Potential energy')) r += ', potentialEnergy=True'
       if (_.contains(d.simulation.statedata_opts, 'Kinetic energy')) r += ', kineticEnergy=True'
-      if (_.contains(d.simulation.statedata_opts, 'Total energy')) r += ', kineticEnergy=True'
+      if (_.contains(d.simulation.statedata_opts, 'Total energy')) r += ', totalEnergy=True'
       if (_.contains(d.simulation.statedata_opts, 'Temperature')) r += ', temperature=True'
       if (_.contains(d.simulation.statedata_opts, 'Volume')) r += ', volume=True'
       if (_.contains(d.simulation.statedata_opts, 'Density')) r += ', density=True'

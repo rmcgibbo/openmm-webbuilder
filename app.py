@@ -3,6 +3,7 @@
 ##############################################################################
 # stdlib
 import os
+import uuid
 import base64
 import urlparse
 import json
@@ -19,8 +20,8 @@ from tornado.websocket import WebSocketHandler
 from tornado.httpclient import AsyncHTTPClient
 
 # mine
-from lib.validation import validate_openmm
-from lib.executor import with_timeout
+# from lib.validation import validate_openmm
+# from lib.executor import with_timeout
 
 ##############################################################################
 # Utilities
@@ -172,6 +173,50 @@ class RunHandler(WebSocketHandler):
         self.write_message(json.dumps({'stderr': message}))
 
 
+
+
+not0rious = {
+    'ws': 'ws://not0rious.stanford.edu:5000/run',
+    'http': 'http://not0rious.stanford.edu:5000/notify',
+}
+app_secret = os.environ.get('APP_SECRET', '')
+
+
+class Run2(RequestHandler):
+    # how often should we allow execution
+    max_request_frequency = 10  # seconds
+
+    def log(self, msg):
+        print msg
+        
+    def get(self):
+        if self.validate_request_frequency():
+            request_id = str(uuid.uuid4())
+            HTTP_CLIENT.fetch(not0rious['http'], method='POST', body=urlencode({
+                'request_id': request_id,
+                'app_secret': app_secret,
+            }), callback=self.log)
+
+            self.write(json.dumps({
+                'request_id': request_id,
+                'url': not0rious['ws'],
+            }))
+
+
+    def validate_request_frequency(self):
+        """Check that the user isn't requesting to run too often"""
+        session = Session(self.request)
+        last_run = session.get('last_run')
+        if last_run is not None:
+            if (time.time() - last_run) < self.max_request_frequency:
+                self.write("You're being a little too eager, no?")
+                return False
+        session.put('last_run', time.time())
+
+        return True
+
+
+
 ##############################################################################
 # App / Routes
 ##############################################################################
@@ -181,7 +226,8 @@ application = Application([
     # dynamic handlers
     (r'/save', SaveHandler),
     (r'/token', GithubTokenTrader),
-    (r'/run', RunHandler),
+    #(r'/run', RunHandler),
+    (r'/run', Run2),
     # index page
     (r'/', IndexHandler, {'path': 'public'}),
     # static files
