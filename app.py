@@ -119,62 +119,6 @@ class IndexHandler(StaticFileHandler):
         return super(IndexHandler, self).get('index.html')
 
 
-class RunHandler(WebSocketHandler):
-    lock = Lock()
-    
-    # how long should we let clients execute for
-    timeout = 10
-    
-    # how often should we allow execution
-    max_frequency = 10  # seconds
-
-    def valid_frequency(self):
-        session = Session(self.request)
-        last_run = session.get('last_run')
-        if last_run is not None:
-            if (time.time() - last_run) < self.max_frequency:
-                self.write_error("You're being a little too eager, no?")
-                return False
-        session.put('last_run', time.time())
-
-        return True
-    
-    def on_message(self, message):
-        got_lock = self.lock.acquire(0)
-        if not got_lock:
-            self.write_error("Sorry, I'm busy")
-            return
-        
-        if not self.valid_frequency():
-            self.lock.release()
-            return
-        
-        openmm_script = base64.decodestring(message)
-        is_valid, validation_error = validate_openmm(openmm_script)
-
-        if is_valid:
-            timed_out = with_timeout(openmm_script, stdout_cb=self.write_output,
-                                     stderr_cb=self.write_error, timeout=self.timeout)
-            # print 'timed out', timed_out
-            if timed_out:
-                self.write_error('Your script timed out!')
-        else:
-            self.write_error(validation_error)
-            
-        self.lock.release()
-
-
-    def write_output(self, message):
-        # print 'output', message
-        self.write_message(json.dumps({'stdout': message}))
-
-    def write_error(self, message):
-        # print 'error', message
-        self.write_message(json.dumps({'stderr': message}))
-
-
-
-
 not0rious = {
     'ws': 'ws://not0rious.stanford.edu:5000/run',
     'http': 'http://not0rious.stanford.edu:5000/notify',
@@ -182,7 +126,7 @@ not0rious = {
 app_secret = os.environ.get('APP_SECRET', '')
 
 
-class Run2(RequestHandler):
+class RunHandler(RequestHandler):
     # how often should we allow execution
     max_request_frequency = 10  # seconds
 
@@ -226,8 +170,7 @@ application = Application([
     # dynamic handlers
     (r'/save', SaveHandler),
     (r'/token', GithubTokenTrader),
-    #(r'/run', RunHandler),
-    (r'/run', Run2),
+    (r'/run', Run),
     # index page
     (r'/', IndexHandler, {'path': 'public'}),
     # static files
