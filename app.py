@@ -170,7 +170,7 @@ application = Application([
     # dynamic handlers
     (r'/save', SaveHandler),
     (r'/token', GithubTokenTrader),
-    (r'/run', Run),
+    (r'/run', RunHandler),
     # index page
     (r'/', IndexHandler, {'path': 'public'}),
     # static files
