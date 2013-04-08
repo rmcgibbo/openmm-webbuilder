@@ -96,6 +96,7 @@ $(function () {
 $(function () {
   save_script_local = function (e) {
     e.preventDefault();
+    _gaq.push(['_trackEvent', 'Script', 'Save']);
     var form = $('#save-form');
 
     var script_input = $("<input name='value'></input");
