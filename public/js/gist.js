@@ -104,41 +104,40 @@ var Gist = function(el) {
   };
 } // end class
 
-
-// main method that uses the class
-$(function () {
-
-  $('.navbar ul.nav').append(' \
-  <li id="navbar-gist" style="padding-left:2em"> \
-    <button id="save-script-gist" class="btn">Save Gist</button> \
-  </li>');
-
-  var gist = new Gist();
-  // Step 4
-  window.addEventListener('message', function (event) {
-    var code = event.data;
-    // Step 5
-    $.get('token?code=' + code, function (access_token) {
-      // Step 7
-      gist.set_token(access_token);
-      gist.post_gist();
-    });
-  });
-
-  $('#save-script-gist').click(function () {
-    if (gist.get_token() == undefined) {
-      //Step 2
-      var uri = 'https://github.com/login/oauth/authorize' +
-          '?client_id=a6a4c15c8e5250bea5c1&scope=gist';
-      window.open(uri);
-      return;
-    }
-
-    if (gist.get_id()) {
-      gist.update_gist();
-    } else {
-      gist.post_gist();
-    }
-
-  });
-});
+// // main method that uses the class
+// $(function () {
+// 
+//   $('.navbar ul.nav').append(' \
+//   <li id="navbar-gist" style="padding-left:2em"> \
+//     <button id="save-script-gist" class="btn">Save Gist</button> \
+//   </li>');
+// 
+//   var gist = new Gist();
+//   // Step 4
+//   window.addEventListener('message', function (event) {
+//     var code = event.data;
+//     // Step 5
+//     $.get('token?code=' + code, function (access_token) {
+//       // Step 7
+//       gist.set_token(access_token);
+//       gist.post_gist();
+//     });
+//   });
+// 
+//   $('#save-script-gist').click(function () {
+//     if (gist.get_token() == undefined) {
+//       //Step 2
+//       var uri = 'https://github.com/login/oauth/authorize' +
+//           '?client_id=a6a4c15c8e5250bea5c1&scope=gist';
+//       window.open(uri);
+//       return;
+//     }
+// 
+//     if (gist.get_id()) {
+//       gist.update_gist();
+//     } else {
+//       gist.post_gist();
+//     }
+// 
+//   });
+// });
