@@ -92,7 +92,7 @@ Temperature of the heat bath, used either by a stochastic integrator or the Ande
 </div>
 
 <div id="integrator-barostat-help">
-Activate a barostat for pressure coupling. The Monte Carlo barostat uses a Monte Carlo algorithm to adjust the size of the periodic box, simulating the effect of constant pressure. The MC barostat assumes the simulation is also being run at constant temperature, and requires you to specify the system temperature (since it affects the acceptance probability for Monte Carlo moves). It does not actually perform temperature regulation, however. You must use another mechanism along with it to maintain the temperature.
+Activate a barostat for pressure coupling. The Monte Carlo barostat uses a Monte Carlo algorithm to adjust the size of the periodic box, simulating the effect of constant pressure. The MC barostat assumes the simulation is also being run at constant temperature. It does not actually perform temperature regulation, however. You must use another mechanism along with it to maintain the temperature. Note that pressure coupling is not appropriate for non-periodic simulations, e.g. implicit solvent.
 </div>
 
 <div id="integrator-pressure-help">
