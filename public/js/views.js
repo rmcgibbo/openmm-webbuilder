@@ -89,8 +89,7 @@ var OpenMMScriptView = Backbone.View.extend({
     } else if (_.contains(['NoCutoff', 'CutoffNonPeriodic'], d.system.nb_method) && d.integrator.barostat == 'Monte Carlo') {
         return 'I see that you\'re not using periodic boundary conditions, yet you\'ve elected to add \
                 a Barostat to the system. Since the Barostat works by changing the system\'s volume via \
-                the periodic box vectors, it\'s only appropriate in periodic simulations. Maybe you should \
-                remove the Barostat?';
+                the periodic box vectors, it\'s only appropriate in periodic simulations.';
     }
     
 

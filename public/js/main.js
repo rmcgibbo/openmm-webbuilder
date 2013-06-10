@@ -116,7 +116,7 @@ $(function () {
 
     error = myview.sanitycheck();
     if (error) {
-        bootbox.confirm(error + "<br/><br/> Are you sure you want to do save this script?", function(result) {
+        bootbox.confirm(error + "<br/><br/> Are you sure you want to save this script?", function(result) {
             if (result) {
                 form.submit();
             }
