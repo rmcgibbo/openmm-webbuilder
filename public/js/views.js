@@ -1,19 +1,19 @@
 var replace_unit = function(val) {
-  var r = val.replace(/\s*nm/, '*nanometers');
-  r = r.replace(/\s*A/, '*angstroms');
+  var r = val.replace(/\s*nm/, '*unit.nanometers');
+  r = r.replace(/\s*A/, '*unit.angstroms');
 
-  r = r.replace(/\s*\/fs/, '/femtoseconds');
-  r = r.replace(/\s*\/ps/, '/picoseconds');
-  r = r.replace(/\s*\/ns/, '/nanoseconds');
+  r = r.replace(/\s*\/fs/, '/unit.femtoseconds');
+  r = r.replace(/\s*\/ps/, '/unit.picoseconds');
+  r = r.replace(/\s*\/ns/, '/unit.nanoseconds');
 
-  r = r.replace(/\s*fs/, '*femtoseconds');
-  r = r.replace(/\s*ps/, '*picoseconds');
-  r = r.replace(/\s*ns/, '*nanoseconds');
+  r = r.replace(/\s*fs/, '*unit.femtoseconds');
+  r = r.replace(/\s*ps/, '*unit.picoseconds');
+  r = r.replace(/\s*ns/, '*unit.nanoseconds');
 
-  r = r.replace(/\s*K/, '*kelvin');
+  r = r.replace(/\s*K/, '*unit.kelvin');
 
-  r = r.replace(/\s*bar/, '*bars');
-  r = r.replace(/\s*atm/, '*atmospheres');
+  r = r.replace(/\s*bar/, '*unit.bars');
+  r = r.replace(/\s*atm/, '*unit.atmospheres');
   return r;
 }
 
@@ -126,9 +126,9 @@ var OpenMMScriptView = Backbone.View.extend({
     r += '# you can save the file to disk and edit it with your favorite editor.\n'
     r += '##########################################################################\n\n'
     r += 'from __future__ import print_function\n';
-    r += 'from simtk.openmm.app import *\n';
-    r += 'from simtk.openmm import *\n';
-    r += 'from simtk.unit import *\n';
+    r += 'from simtk.openmm import app\n';
+    r += 'import simtk.openmm as mm\n';
+    r += 'from simtk import unit\n';
     if (d.simulation.statedata_file.length == 0) {
       r += 'from sys import stdout\n';
     }
@@ -136,28 +136,32 @@ var OpenMMScriptView = Backbone.View.extend({
     // first two or three lines, that load up the FF and the pdb
     // these lines end with the start of the function something.createSystem(
     if (opt.pdb) {
-      r += "\npdb = PDBFile('" + d.general.coords_fn + "')\n";
-      r += "forcefield = ForceField('" + protein_xml(d.general.protein) + "'"
+      r += "\npdb = app.PDBFile('" + d.general.coords_fn + "')\n";
+      r += "forcefield = app.ForceField('" + protein_xml(d.general.protein) + "'"
       r += ", '" + water_xml(d.general.protein, d.general.water) + "'";
       r += ')\n\n';
       r += 'system = forcefield.createSystem(pdb.topology, '
     } else if (opt.amber) {
-      r += "\nprmtop = AmberPrmtopFile('" + d.general.topology_fn + "')\n";
-      r += "inpcrd = AmberInpcrdFile('" + d.general.coords_fn + "')\n\n";
+      r += "\nprmtop = app.AmberPrmtopFile('" + d.general.topology_fn + "')\n";
+      r += "inpcrd = app.AmberInpcrdFile('" + d.general.coords_fn + "')\n\n";
       r += 'prmtop.createSystem('
       if (d.general.water == 'Implicit Solvent (OBC)') {
-          r += 'implicitSovlent=OBC2, '
+          r += 'implicitSovlent=app.OBC2, '
       }
     } else {
       bootbox.alert('Error!');
     }
 
     // options for the system
-    r += 'nonbondedMethod=' + d.system.nb_method + ', ';
+    r += 'nonbondedMethod=' + 'app.' + d.system.nb_method + ', ';
     if (opt.nb_cutoff) {
       r += 'nonbondedCutoff=' + replace_unit(d.system.nb_cutoff) + ',';
     }
-    r += ' constraints=' + d.system.constraints;
+    if (d.system.constraints == 'None') {
+      r += ' constraints=' + d.system.constraints;
+    } else {
+      r += ' constraints=' + 'app.' + d.system.constraints;
+    }
     r += ', rigidWater=' + d.system.rigid_water;
     if (_.contains(['Ewald', 'PME'], d.system.nb_method)) {
       r += ', ewaldErrorTolerance=' + d.system.ewald_error_tolerance;
@@ -165,7 +169,7 @@ var OpenMMScriptView = Backbone.View.extend({
     r += ')\n';
 
     // set the integrator
-    r += 'integrator = ' + d.integrator.kind + 'Integrator(';
+    r += 'integrator = mm.' + d.integrator.kind + 'Integrator(';
     if (d.integrator.kind == 'Langevin' || d.integrator.kind == 'Brownian') {
       r += replace_unit(d.integrator.temperature) + ', '
       r += replace_unit(d.integrator.friction) + ', ';
@@ -181,7 +185,7 @@ var OpenMMScriptView = Backbone.View.extend({
 
     // add a barostat
     if (d.integrator.barostat == 'Monte Carlo') {
-      r += "system.addForce(MonteCarloBarostat(" + replace_unit(d.integrator.pressure);
+      r += "system.addForce(mm.MonteCarloBarostat(" + replace_unit(d.integrator.pressure);
       r += ', ' + replace_unit(d.integrator.temperature);
       if (d.integrator.barostat_step.length > 0) {
         r += ', ' +  d.integrator.barostat_step;
@@ -191,14 +195,14 @@ var OpenMMScriptView = Backbone.View.extend({
 
     // add a thermostat
     if (d.integrator.thermostat == 'Andersen') {
-      r += 'system.addForce(AndersenThermostat(' + replace_unit(d.integrator.temperature);
+      r += 'system.addForce(mm.AndersenThermostat(' + replace_unit(d.integrator.temperature);
       r += ', ' + replace_unit(d.integrator.friction) + '))\n'
     }
 
     r += '\n';
 
     // set the platform options
-    r += "platform = Platform.getPlatformByName('" + d.general.platform + "')\n"
+    r += "platform = mm.Platform.getPlatformByName('" + d.general.platform + "')\n"
     if (opt.cuda) {
       r += "properties = {'CudaPrecision': '" + d.general.precision + "'";
       if (d.general.device.length > 0) {
@@ -223,7 +227,7 @@ var OpenMMScriptView = Backbone.View.extend({
     }
 
     // create the simulation object
-    r += "simulation = Simulation(" + (opt.pdb ? "pdb" : "prmtop") + ".topology, system, integrator, platform";
+    r += "simulation = app.Simulation(" + (opt.pdb ? "pdb" : "prmtop") + ".topology, system, integrator, platform";
     if (opt.cuda || opt.open_cl) {
       r += ', properties'
     }
@@ -258,10 +262,10 @@ var OpenMMScriptView = Backbone.View.extend({
 
     // add reporters
     if (d.simulation.dcd_reporter == 'True' && d.simulation.statedata_opts.length > 0) {
-      r += "simulation.reporters.append(DCDReporter('" + d.simulation.dcd_file + "'";
+      r += "simulation.reporters.append(app.DCDReporter('" + d.simulation.dcd_file + "'";
       r += ', ' + d.simulation.dcd_freq + "))\n"
     } if (d.simulation.statedata_reporter == 'True') {
-       r += "simulation.reporters.append(StateDataReporter("
+       r += "simulation.reporters.append(app.StateDataReporter("
       if (d.simulation.statedata_file.length == 0) {
         r += 'stdout';
       } else {
