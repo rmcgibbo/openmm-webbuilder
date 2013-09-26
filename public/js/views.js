@@ -92,6 +92,14 @@ var OpenMMScriptView = Backbone.View.extend({
                 the periodic box vectors, it\'s only appropriate in periodic simulations.';
     }
     
+    if (d.general.coords_fn.match(/\.gro$/) != null && d.general.topology_fn.match(/\.prmtop$/) != null) {
+      bootbox.alert("Gromacs '.gro' coordinate files are only compatible with Gromacs '.top' topology files.\
+                     You probably want to change Input Topology to a .top file?");
+    } else if (d.general.coords_fn.match(/\.inpcrd$/) != null && d.general.topology_fn.match(/\.top$/) != null) {
+      bootbox.alert("Amber '.inpcrd' coordinate files are only compatible with Amber '.prmtop' topology files.\
+                     You probably want to change Input Topology to a .prmtop file?");
+    }
+    
 
     return null;
     //if (integrator is langevin or  verlet) and ((constraints is None and dt>1 fs) or (constraints is HBonds or AllBonds and dt>2 fs) or (constraints is HAngles and dt>4 fs)
@@ -109,11 +117,13 @@ var OpenMMScriptView = Backbone.View.extend({
     opt = {
       pdb: d.general.coords_fn.match(/\.pdb$/) != null,
       amber: d.general.coords_fn.match(/\.inpcrd$/) != null,
+      gromacs: d.general.coords_fn.match(/\.gro$/) != null,
       nb_cutoff: d.system.nb_method != 'NoCutoff',
       cuda: d.general.platform == 'CUDA',
       open_cl: d.general.platform == 'OpenCL',
       variable_timestep: _.contains(['VariableLangevin', 'VariableVerlet'], d.integrator.kind),
     }
+    
     
     // If you are reading this code below, I'm sincerely sorry.
     // There's no "elegant" way to create this script
@@ -148,10 +158,17 @@ var OpenMMScriptView = Backbone.View.extend({
       if (d.general.water == 'Implicit Solvent (OBC)') {
           r += 'implicitSovlent=app.OBC2, '
       }
+    } else if (opt.gromacs) {
+      r += "\ngro = app.GromacsGroFile('" + d.general.coords_fn + "')\n";
+      r += "top = app.GromacsTopFile('" + d.general.topology_fn + "')\n\n";
+      r += 'top.createSystem('
+      if (d.general.water == 'Implicit Solvent (OBC)') {
+          r += 'implicitSovlent=app.OBC2, '
+      }
     } else {
       bootbox.alert('Error!');
     }
-
+    
     // options for the system
     r += 'nonbondedMethod=' + 'app.' + d.system.nb_method + ', ';
     if (opt.nb_cutoff) {
@@ -237,8 +254,10 @@ var OpenMMScriptView = Backbone.View.extend({
       r += 'simulation.context.setPositions(pdb.positions)\n\n'
     } else if (opt.amber) {
       r += 'simulation.context.setPositions(inpcrd.positions)\n\n'
+    } else if (opt.gromacs) {
+      r += 'simulation.context.setPositions(gro.positions)\n\n'
     } else {
-      bootbox.alert('Error!');
+      bootbox.alert('Error!!');
     }
 
     // minimize

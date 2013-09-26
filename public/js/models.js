@@ -42,9 +42,9 @@ General = Backbone.Model.extend({
   name: 'general',
   schema: {
     coords_fn:   {type: 'Text', title: 'Input coordinates',
-                  validators: ['required', /\.pdb$|\.inpcrd$/]},
+                  validators: ['required', /\.pdb$|\.inpcrd$|\.gro$/]},
     topology_fn: {type: 'Text', title: 'Input topology',
-                  validators: ['prmtop', 'required']},
+                  validators: ['prmtop_or_top', 'required']},
     protein:   {type: 'Select', title: 'Forcefield',
                 options: ['AMBER96', 'AMBER99sb',
                           'AMBER99sb-ildn', 'AMBER99sb-nmr',
@@ -64,7 +64,7 @@ General = Backbone.Model.extend({
 
   visibility: {
     protein: function(attrs) {
-      return !(attrs.coords_fn.match(/\.inpcrd$/) && attrs.topology_fn.match(/\.prmtop$/))
+      return !(attrs.coords_fn.match(/\.inpcrd|\.gro$/) && attrs.topology_fn.match(/\.prmtop|\.top$/))
     },
     water: function(attrs) {
       // if (attrs.coords_fn.match(/\.inpcrd$/) && attrs.topology_fn.match(/\.prmtop$/)) {
@@ -79,7 +79,7 @@ General = Backbone.Model.extend({
       return _.contains(['CUDA', 'OpenCL'], attrs.platform);
     },
     topology_fn: function(attrs) {
-      return attrs.coords_fn.match(/\.inpcrd$/)
+      return attrs.coords_fn.match(/\.inpcrd|\.gro$/);
     },
     opencl_plat_index: function(attrs) {
       return attrs.platform == 'OpenCL';

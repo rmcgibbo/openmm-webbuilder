@@ -61,11 +61,11 @@ Backbone.Form.validators['pos_float'] = function(options) {
     if (! value.match(/^$|^\s*\d+(\.\d+)?\s*$/)) return err;
 }};
 
-Backbone.Form.validators['prmtop'] = function(options) {
+Backbone.Form.validators['prmtop_or_top'] = function(options) {
   return function required(value) {
     var err = {
       type: 'float',
-      message: '.prmtop file required',
+      message: '.prmtop or .top file required',
     };
-    if (! value.match(/^$|.*\.prmtop$/)) return err;
+    if (! value.match(/^$|.*\.prmtop$|.*\.top$/)) return err;
 }};
