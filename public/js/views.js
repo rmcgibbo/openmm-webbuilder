@@ -154,14 +154,14 @@ var OpenMMScriptView = Backbone.View.extend({
     } else if (opt.amber) {
       r += "\nprmtop = app.AmberPrmtopFile('" + d.general.topology_fn + "')\n";
       r += "inpcrd = app.AmberInpcrdFile('" + d.general.coords_fn + "')\n\n";
-      r += 'prmtop.createSystem('
+      r += 'system = prmtop.createSystem('
       if (d.general.water == 'Implicit Solvent (OBC)') {
           r += 'implicitSovlent=app.OBC2, '
       }
     } else if (opt.gromacs) {
       r += "\ngro = app.GromacsGroFile('" + d.general.coords_fn + "')\n";
       r += "top = app.GromacsTopFile('" + d.general.topology_fn + "')\n\n";
-      r += 'top.createSystem('
+      r += 'system = top.createSystem('
       if (d.general.water == 'Implicit Solvent (OBC)') {
           r += 'implicitSovlent=app.OBC2, '
       }
