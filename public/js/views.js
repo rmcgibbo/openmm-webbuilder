@@ -299,6 +299,11 @@ var OpenMMScriptView = Backbone.View.extend({
       if (_.contains(d.simulation.statedata_opts, 'Temperature')) r += ', temperature=True'
       if (_.contains(d.simulation.statedata_opts, 'Volume')) r += ', volume=True'
       if (_.contains(d.simulation.statedata_opts, 'Density')) r += ', density=True'
+      if (_.contains(d.simulation.statedata_opts, 'Progress')) r += ', progress=True, remainingTime=True'
+      if (_.contains(d.simulation.statedata_opts, 'Speed')) r += ', speed=True'
+      // if using progress (which also implies remaining time), totalSteps
+      // is required.
+      if (_.contains(d.simulation.statedata_opts, 'Progress')) r += ', totalSteps=' + d.simulation.prod_steps
       r += '))\n'
     } if (d.simulation.dcd_reporter == 'True' || d.simulation.statedata_reporter == 'True') {
       r += '\n';
