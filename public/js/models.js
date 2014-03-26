@@ -52,7 +52,7 @@ General = Backbone.Model.extend({
     water:     {type: 'Select', options: ['SPC/E', 'TIP3P',
                                           'TIP4P-Ew', 'TIP5P', 'Implicit Solvent (OBC)'],
                 title: 'Water Model'},
-    platform:  {type: 'Select', options: ['Reference', 'OpenCL', 'CUDA'],
+    platform:  {type: 'Select', options: ['Reference', 'OpenCL', 'CPU', 'CUDA'],
                 title: 'Platform'},
     precision: {type: 'Select', options: ['single', 'mixed', 'double'],
                      title: 'Precision'},
@@ -222,8 +222,9 @@ Simulation = Backbone.Model.extend({
     statedata_freq: {type: 'Text', title: 'StateData freq [steps]', validators: ['pos_integer', 'required']},
     statedata_file: {type: 'Text', title: 'StateData filename'},
     statedata_opts: {type: 'Checkboxes', title: 'StateData options',
-                     options: ['Step index', 'Time', 'Potential energy', 'Kinetic energy',
-                               'Total energy', 'Temperature', 'Volume', 'Density']},
+                     options: ['Step index', 'Time', 'Speed', 'Progress', 'Potential energy',
+                               'Kinetic energy', 'Total energy', 'Temperature', 'Volume',
+                               'Density']},
   },
 
   defaults: {
@@ -237,7 +238,7 @@ Simulation = Backbone.Model.extend({
     statedata_reporter: 'True',
     statedata_freq: 1000,
     statedata_file: '',
-    statedata_opts: ['Step index', 'Potential energy', 'Temperature'],
+    statedata_opts: ['Step index', 'Speed', 'Progress', 'Potential energy', 'Temperature'],
   },
 
   visibility: {
