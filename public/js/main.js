@@ -9,7 +9,7 @@ $(function () {
         }
   });
   
-  Backbone.Form.editors.List.Modal.ModalAdapter = Backbone.BootstrapModal;
+  // Backbone.Form.editors.List.Modal.ModalAdapter = Backbone.BootstrapModal;
   //Backbone.Form.helpers.keyToTitle = function (key) {return key};
 
   var ModelsClasses = [General, System, Integrator, Simulation];

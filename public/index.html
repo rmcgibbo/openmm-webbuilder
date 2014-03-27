@@ -35,23 +35,21 @@
       })();
     </script>
 
-    <!-- my stuff --> 
-    <link href="css/style.css" rel="stylesheet">
-    
-    <!-- Backbone.Forms extension-->
-    <!-- <script src="js/libs/backbone.forms/backbone-forms.js"></script>
-    <script src="js/libs/backbone.forms/list.js"></script>
-    <script src="js/libs/backbone.forms/backbone.bootstrap-modal.js"></script>  
-    <script src="js/libs/backbone.forms/bootstrap.js"></script>
     <script src="js/libs/chevron.js"></script>
     <script src="js/libs/bootbox.min.js"></script>
     <script src="js/libs/base64.js"></script>
-     -->
-     
-    <!-- minified versions of all of the libs above-->
     <script src="js/libs/mousetrap.min.js"></script>
-    <script src="js/lib.min.js"></script>
-    
+
+    <!-- backbone-forms -->
+    <script src="js/backbone-forms/distribution/backbone-forms.min.js"></script>
+    <script src="js/backbone-forms/distribution/templates/bootstrap.js"></script>
+    <link href="js/backbone-forms/distribution/templates/bootstrap.css" rel="stylesheet" />
+
+    <!-- bootstrap-select customization of the dropdowns -->
+    <!-- http://silviomoreto.github.io/bootstrap-select/ -->
+    <script src="js/bootstrap-select.min.js"></script>
+    <link href="css/bootstrap-select.min.css" rel="stylesheet">
+
     <!-- but keep this app stuff unminified, for easier development -->
     <script src="js/validators.js"></script>
     <script src="js/utils.js"></script>
@@ -60,6 +58,8 @@
     <script src="js/gist.js"></script>
     <script src="js/run.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/customize-style.js"></script>
+    <link href="css/style.css" rel="stylesheet">
 
   </head>
 <body>
@@ -103,7 +103,7 @@
 <!-- Two column layout -->
 <div class="container-fluid">
   <div class="row-fluid">
-    <div class="span4">
+    <div class="span4" id="tab-container">
       <ul id="sidebar-tab" class="nav nav-pills nav-tabs">
         <li class="active"><a href="#general">General</a></li>
         <li><a href="#system">System</a></li>
