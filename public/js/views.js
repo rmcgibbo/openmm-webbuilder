@@ -304,7 +304,7 @@ var OpenMMScriptView = Backbone.View.extend({
             // if using progress (which also implies remaining time), totalSteps
             // is required.
             if (_.contains(d.simulation.statedata_opts, 'Progress')) r += ', totalSteps=' + d.simulation.prod_steps
-            r += '))\n'
+            r += ", separator='\\t'))\n"
         }
         if (d.simulation.reporters != null) {
             r += '\n';
