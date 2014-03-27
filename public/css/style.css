@@ -24,6 +24,9 @@ html, body {
     overflow: hidden;
 }
 
+.bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]) {
+    width: 185px;
+}
 
 .bbf-checkboxes li label {
 /*  float: left;*/
