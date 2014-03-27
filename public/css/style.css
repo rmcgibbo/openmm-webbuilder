@@ -20,11 +20,8 @@ html, body {
     color:#bbb
 }
 
-.tab-container {
-    height: 550px;
-}
 .tab-content {
-    height: 550px;
+    overflow: hidden;
 }
 
 
@@ -54,11 +51,9 @@ label.control-label {
 /* make sure that the input forms dont go any wider
    than their box*/
 input {
-  max-width: 150px;
+  max-width: 170px;
 }
-select {
-  max-width: 165px;
-}
+
 
 #thermostat-statedata_opts {
     position: relative;

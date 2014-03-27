@@ -128,28 +128,12 @@ Perform local energy minimization, to find a local potential energy minimum near
 The minimizer will exit once the specified number of iterations is reached, even if the energy has not yet converged. If you do not specify this parameter, the minimizer will continue until convergence is reached, no matter how many iterations it takes.
 </div>
 
-<div id="simulation-dcd_reporter-help">
-DCDReporter outputs a series of frames from a Simulation to a DCD file.
+<div id="simulation-reporters-help">
+Reporters save or display information about your simulation. DCD and PDB save trajectories in their respective formats, and StateData prints out summary statistics on the simulation.
 </div>
 
-<div id="simulation-dcd_freq-help">
-Frequency, in steps, to save the state to disk in the DCD format.
-</div>
-
-<div id="simulation-dcd_file-help">
-Filename of the DCD file to which the data shall be saved.
-</div>
-
-<div id="simulation-statedata_reporter-help">
-Attach a StateDataReporter to the simulation to print summary statistics as the simulation is running.
-</div>
-
-<div id="simulation-statedata_freq-help">
-Frequency, in steps, to print summary statistics on the state of the simulation.
-</div>
-
-<div id="simulation-statedata_file-help">
-Filename to which to save the output of the StateDataReporter. If left blank, the output will be printed to stdout.
+<div id="simulation-reporter_freq-help">
+Frequency, in steps, to trigger the reporters.
 </div>
 
 <div id="simulation-statedata_opts-help">
