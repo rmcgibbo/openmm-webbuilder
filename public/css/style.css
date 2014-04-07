@@ -20,9 +20,17 @@ html, body {
     color:#bbb
 }
 
-.bbf-checkboxes label {
-  float: left;
-  padding-left: 1em;
+.tab-content {
+    overflow: hidden;
+}
+
+.bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]) {
+    width: 185px;
+}
+
+.bbf-checkboxes li label {
+/*  float: left;*/
+  padding-left: 2em;
   white-space: nowrap;
 }
 .bbf-checkboxes input {
@@ -46,11 +54,16 @@ label.control-label {
 /* make sure that the input forms dont go any wider
    than their box*/
 input {
-  max-width: 150px;
+  max-width: 170px;
 }
-select {
-  max-width: 165px;
+
+
+#thermostat-statedata_opts {
+    position: relative;
+    top: -25px;
+    margin: 0 0 0 0;
 }
+
 
 .stderr {
     color: #BA1919; /* dark red */
@@ -67,6 +80,7 @@ select {
   margin-left: 150px;
   width: 100px;
 }
+
 
 /* decrease the spacing between elements*/
 .form-horizontal .control-group {
@@ -98,7 +112,7 @@ a.sidebar-label {
   min-height: 100%;
   height: auto !important;
   height: 100%;
-  overflow: auto;
+/*  overflow: auto;*/
   margin: 0 auto -60px; /* the bottom margin is the negative value of the footer's height */
 }
 

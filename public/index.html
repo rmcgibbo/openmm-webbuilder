@@ -6,7 +6,7 @@
     <link rel="icon" href="images/favicon.ico" type="image/x-icon"> 
     <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon"> 
 
-    <!-- Bootstrap, jQuery -->
+    <!-- Twitter Bootstrap, jQuery -->
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
     <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
@@ -15,12 +15,26 @@
     <!-- underscore.js, backbone.js -->
     <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.0.0/backbone-min.js"></script>
-    
-    
+
     <!-- Google Code Prettifier for syntax highlighting-->
     <script src="//cdnjs.cloudflare.com/ajax/libs/prettify/r224/prettify.js" type="text/javascript"></script>
     <link href="//cdnjs.cloudflare.com/ajax/libs/prettify/r224/prettify.css" type="text/css">
     <script src="//google-code-prettify.googlecode.com/svn/loader/run_prettify.js?autorun=false"></script>
+
+    <!-- mousetrap, for intercepting control-s to save script,
+        and bootbox for displaying warnings -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/mousetrap/1.4.6/mousetrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.2.0/bootbox.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/Base64/0.2.0/base64.min.js"></script>
+
+    <!-- backbone-forms plugin -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/backbone-forms/0.12.0/backbone-forms.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/backbone-forms/0.12.0/templates/bootstrap.js"></script>
+    <link href="//cdnjs.cloudflare.com/ajax/libs/backbone-forms/0.12.0/templates/bootstrap.css" rel="stylesheet" />
+
+    <!-- bootstrap-select customization of the dropdowns -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.4.1/bootstrap-select.min.js"></script>
+    <link href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.4.1/bootstrap-select.min.css" rel="stylesheet">
 
     <!-- Google analytics tracking  -->
     <script type="text/javascript">
@@ -35,24 +49,7 @@
       })();
     </script>
 
-    <!-- my stuff --> 
-    <link href="css/style.css" rel="stylesheet">
-    
-    <!-- Backbone.Forms extension-->
-    <!-- <script src="js/libs/backbone.forms/backbone-forms.js"></script>
-    <script src="js/libs/backbone.forms/list.js"></script>
-    <script src="js/libs/backbone.forms/backbone.bootstrap-modal.js"></script>  
-    <script src="js/libs/backbone.forms/bootstrap.js"></script>
-    <script src="js/libs/chevron.js"></script>
-    <script src="js/libs/bootbox.min.js"></script>
-    <script src="js/libs/base64.js"></script>
-     -->
-     
-    <!-- minified versions of all of the libs above-->
-    <script src="js/libs/mousetrap.min.js"></script>
-    <script src="js/lib.min.js"></script>
-    
-    <!-- but keep this app stuff unminified, for easier development -->
+    <!-- my javascript and css stuff -->
     <script src="js/validators.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/models.js"></script>
@@ -60,6 +57,8 @@
     <script src="js/gist.js"></script>
     <script src="js/run.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/customize-style.js"></script>
+    <link href="css/style.css" rel="stylesheet">
 
   </head>
 <body>

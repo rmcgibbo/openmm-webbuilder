@@ -9,7 +9,7 @@ $(function () {
         }
   });
   
-  Backbone.Form.editors.List.Modal.ModalAdapter = Backbone.BootstrapModal;
+  // Backbone.Form.editors.List.Modal.ModalAdapter = Backbone.BootstrapModal;
   //Backbone.Form.helpers.keyToTitle = function (key) {return key};
 
   var ModelsClasses = [General, System, Integrator, Simulation];
@@ -111,8 +111,7 @@ $(function () {
 
     // need to escape out some html entities
     var rawcode = $('#code').text();
-    var b64code = Base64.encode(rawcode)
-    script_input.attr('type', 'hidden').attr('value', b64code).appendTo(form);
+    script_input.attr('type', 'hidden').attr('value', btoa(rawcode)).appendTo(form);
 
     error = myview.sanitycheck();
     if (error) {

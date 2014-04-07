@@ -211,33 +211,27 @@ Simulation = Backbone.Model.extend({
   el: '#sidepane-simulation',
   name: 'simulation',
   schema: {
+    reporters: {type: 'Select', title: 'Reporters', fieldClass:'select-multiple',
+                  options: ['StateData', 'DCD', 'PDB']},
+    reporter_freq: {type: 'Text', title: 'Report Interval', validators: ['pos_integer']},
     equil_steps: {type: 'Text', title: 'Equilibration steps', validators: ['pos_integer']},
     prod_steps: {type: 'Text', title: 'Production steps', validators: ['pos_integer', 'required']},
     minimize: {type: 'Select', options: ['True', 'False'], title: 'Minimize?'},
     minimize_iters: {type: 'Text', title: 'Max minimize steps', validators: ['pos_integer']},
-    dcd_reporter: {type: 'Select', options: ['True', 'False'], title: 'DCD reporter?'},
-    dcd_freq: {type: 'Text', title: 'DCD freq [steps]', validators: ['pos_integer', 'required']},
-    dcd_file: {type: 'Text', title: 'DCD filename'},
-    statedata_reporter: {type: 'Select', options: ['True', 'False'], title: 'StateData reporter?'},
-    statedata_freq: {type: 'Text', title: 'StateData freq [steps]', validators: ['pos_integer', 'required']},
-    statedata_file: {type: 'Text', title: 'StateData filename'},
-    statedata_opts: {type: 'Checkboxes', title: 'StateData options',
+    statedata_opts: {type: 'Checkboxes', title: 'StateData options', fieldClass: 'bbf-checkboxes',
                      options: ['Step index', 'Time', 'Speed', 'Progress', 'Potential energy',
                                'Kinetic energy', 'Total energy', 'Temperature', 'Volume',
                                'Density']},
   },
 
   defaults: {
+    // this default is det manually in custom-style.js
+    // reporters: 'StateData',
+    reporter_freq: 1000,
     equil_steps: 100,
     prod_steps: 1000,
     minimize: 'True',
     minimize_iters: '',
-    dcd_reporter: 'True',
-    dcd_freq: 1000,
-    dcd_file: 'output.dcd',
-    statedata_reporter: 'True',
-    statedata_freq: 1000,
-    statedata_file: '',
     statedata_opts: ['Step index', 'Speed', 'Progress', 'Potential energy', 'Temperature'],
   },
 
@@ -245,20 +239,8 @@ Simulation = Backbone.Model.extend({
     minimize_iters: function(attrs) {
       return attrs.minimize == 'True';
     },
-    dcd_freq: function(attrs) {
-      return attrs.dcd_reporter == 'True';
-    },
-    dcd_file: function(attrs) {
-      return attrs.dcd_reporter == 'True';
-    },
-    statedata_freq: function(attrs) {
-      return attrs.statedata_reporter == 'True';
-    },
-    statedata_file: function(attrs) {
-      return attrs.statedata_reporter == 'True';
-    },
     statedata_opts: function(attrs) {
-      return attrs.statedata_reporter == 'True';
+      return _.contains(attrs.reporters, 'StateData');
     },
   },
 });
