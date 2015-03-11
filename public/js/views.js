@@ -161,7 +161,7 @@ var OpenMMScriptView = Backbone.View.extend({
             r += "top = app.GromacsTopFile('" + d.general.topology_fn + "')\n\n";
             r += 'system = top.createSystem('
             if (d.general.water == 'Implicit Solvent (OBC)') {
-                r += 'implicitSovlent=app.OBC2, '
+                r += 'implicitSolvent=app.OBC2, '
             }
         } else {
             bootbox.alert('Error!');
