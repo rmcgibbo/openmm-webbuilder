@@ -1,0 +1,7 @@
+deploy:
+  provider: heroku
+  api_key:
+    secure: QBfm8ZAv+XIlH5nk8Kon+0fapCeBvY2qNHFXRzvs4P7xewEJ32zNgkCN5A44fu8dpZN8d1ZdvQsN1IPdqH7JB56fldpMKUHakOLT0W+xCJuiAyygz7B3BBNICb31aCeQNNw+NDgHM4OQree5muORGUcn69PWiSiFzGhRz8fqIkE=
+  app: openmm
+  on:
+    repo: rmcgibbo/openmm-webbuilder
