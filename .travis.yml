@@ -1,3 +1,11 @@
+language: c
+
+install:
+  - echo "install"
+
+script:
+  - echo "script"
+
 deploy:
   provider: heroku
   api_key:
