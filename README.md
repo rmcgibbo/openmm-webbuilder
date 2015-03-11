@@ -2,6 +2,8 @@
 ==================
 _webapp for generating custom OpenMM scripts_
 
+[![Build Status](https://travis-ci.org/rmcgibbo/openmm-webbuilder.svg?branch=master)](https://travis-ci.org/rmcgibbo/openmm-webbuilder)
+
 ## Development
 The app is almost 100% javscript, running in the browser. But interaction with the server is required
 for saving the script to disk and saving the script to gist. To run the development server on
