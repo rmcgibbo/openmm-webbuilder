@@ -99,36 +99,26 @@ $(function () {
     _gaq.push(['_trackEvent', 'Script', 'Save']);
     var form = $('#save-form');
 
-    var script_input = $("<input name='value'></input");
-    var filename_input = form.find('input[name="filename"]')
-
-    // check if no value has been entered for the filename
-    var set_value_from_placeholder = false;
-    if (filename_input[0].value == '') {
-      set_value_from_placeholder = true;
-      filename_input[0].value = filename_input.attr('placeholder');
+    var filename_input = form.find('input[name="filename"]');
+    var filename = filename_input.value;
+    if (filename == '') {
+        filename = filename_input.attr('placeholder');
     }
 
     // need to escape out some html entities
     var rawcode = $('#code').text();
-    script_input.attr('type', 'hidden').attr('value', btoa(rawcode)).appendTo(form);
+    var blob = new Blob([rawcode], {type: "text/plain;charset=utf-8"});
 
     error = myview.sanitycheck();
     if (error) {
         bootbox.confirm(error + "<br/><br/> Are you sure you want to save this script?", function(result) {
             if (result) {
-                form.submit();
+                saveAs(blob, filename_input[0].value);
             }
         }); 
     } else {
-        form.submit();
+        saveAs(blob, filename_input[0].value);
     }
-
-    // reset it, if we messed w/ the form
-    if (set_value_from_placeholder) {
-      filename_input[0].value = '';
-    }
-
   };
 
   Mousetrap.bind(['command+s', 'ctrl+s'], save_script_local);
