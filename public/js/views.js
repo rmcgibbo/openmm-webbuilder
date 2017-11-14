@@ -154,7 +154,7 @@ var OpenMMScriptView = Backbone.View.extend({
             r += "inpcrd = app.AmberInpcrdFile('" + d.general.coords_fn + "')\n\n";
             r += 'system = prmtop.createSystem('
             if (d.general.water == 'Implicit Solvent (OBC)') {
-                r += 'implicitSovlent=app.OBC2, '
+                r += 'implicitSolvent=app.OBC2, '
             }
         } else if (opt.gromacs) {
             r += "\ngro = app.GromacsGroFile('" + d.general.coords_fn + "')\n";
